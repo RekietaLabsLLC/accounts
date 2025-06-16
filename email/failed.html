@@ -15,7 +15,7 @@
       align-items: center;
       justify-content: center;
       height: 100vh;
-      color: #b00020; /* Soft red for error */
+      color: #333;
       text-align: center;
       padding: 20px;
     }
@@ -33,14 +33,43 @@
 
     p {
       font-size: 1.2rem;
-      color: #8a000f; /* Darker red for the text */
-      max-width: 400px;
+      color: #555;
+      max-width: 500px;
+    }
+
+    .ref-id {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #999;
     }
   </style>
 </head>
 <body>
   <img src="email-failure.png" alt="Email Confirmation Failed" />
-  <h1>Confirmation Failed</h1>
-  <p>We're sorry, but we couldn't verify your email. The link may have expired or been used already.</p>
+  <h1>Email Confirmation Failed</h1>
+  <p id="message"></p>
+  <div class="ref-id" id="refid">REF ID: 765004</div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const reason = params.get("reason") || "default";
+
+    const errorMap = {
+      "expired": { message: "Token expired or invalid", ref: "765634" },
+      "nomatch": { message: "User ID does not match provided token or user email", ref: "765494" },
+      "notfound": { message: "No account found with provided email (e.g. deleted before clicking link)", ref: "765284" },
+      "already": { message: "Link used after already confirming (email is already verified)", ref: "765374" },
+      "disabled": { message: "Email confirmation disabled for this project (misconfiguration in Supabase)", ref: "765984" },
+      "sendfail": { message: "SMTP/Email service failed to send (or misconfigured provider like SendGrid)", ref: "765224" },
+      "revoked": { message: "Token manually revoked (admin disabled it before use)", ref: "765814" },
+      "tampered": { message: "Token format tampered with (manually edited link/token)", ref: "765194" },
+      "supabasefail": { message: "Supabase error while updating user record (e.g., permission issues)", ref: "765314" },
+      "default": { message: "Internal server error (fallback generic issue)", ref: "765004" }
+    };
+
+    const error = errorMap[reason] || errorMap["default"];
+    document.getElementById("message").innerText = error.message;
+    document.getElementById("refid").innerText = "REF ID: " + error.ref;
+  </script>
 </body>
 </html>
