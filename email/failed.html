@@ -1,55 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Email Confirmation Failed</title>
-<style>
-  body {
-    background-color: #f8faf7;
-    font-family: Arial, sans-serif;
-    text-align: center;
-    padding: 50px;
-    color: #b00020; /* A nice red shade */
-  }
-  .container {
-    max-width: 400px;
-    margin: 0 auto;
-  }
-  img {
-    width: 100px;
-    margin-bottom: 30px;
-  }
-  h1 {
-    font-size: 2em;
-    margin-bottom: 15px;
-  }
-  p {
-    font-size: 1.1em;
-  }
-  a {
-    display: inline-block;
-    margin-top: 30px;
-    text-decoration: none;
-    color: #b00020;
-    border: 2px solid #b00020;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-weight: bold;
-    transition: background-color 0.3s, color 0.3s;
-  }
-  a:hover {
-    background-color: #b00020;
-    color: #fff;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Email Confirmation Failed</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #f8faf7;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: #b00020; /* Soft red for error */
+      text-align: center;
+      padding: 20px;
+    }
+
+    img {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 1.2rem;
+      color: #8a000f; /* Darker red for the text */
+      max-width: 400px;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <img src="email-failure.png" alt="Email Confirmation Failed" />
-    <h1>Oops! Email Confirmation Failed</h1>
-    <p>Sorry, we couldn't verify your email. The link may be invalid or expired.</p>
-    <a href="/">Return to Home</a>
-  </div>
+  <img src="email-failure.png" alt="Email Confirmation Failed" />
+  <h1>Confirmation Failed</h1>
+  <p>We're sorry, but we couldn't verify your email. The link may have expired or been used already.</p>
 </body>
 </html>
