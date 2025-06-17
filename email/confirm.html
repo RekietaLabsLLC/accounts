@@ -36,7 +36,7 @@
       const uid = params.get("uid");
 
       if (!email || !token || !uid) {
-        window.location.href = "https://accounts.rekietalabs.com/email/failure.html?reason=default";
+        window.location.href = "https://accounts.rekietalabs.com/email/failed.html?reason=default";
         return;
       }
 
@@ -55,10 +55,10 @@
           window.location.href = "https://accounts.rekietalabs.com/email/confirmed";
         } else {
           const reason = encodeURIComponent(result.reason || "default");
-          window.location.href = `https://accounts.rekietalabs.com/email/failure.html?reason=${reason}`;
+          window.location.href = `https://accounts.rekietalabs.com/email/failed.html?reason=${reason}`;
         }
       } catch (err) {
-        window.location.href = "https://accounts.rekietalabs.com/email/failure.html?reason=default";
+        window.location.href = "https://accounts.rekietalabs.com/email/failed.html?reason=default";
       }
     })();
   </script>
