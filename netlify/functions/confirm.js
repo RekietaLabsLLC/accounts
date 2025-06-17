@@ -6,51 +6,37 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-export default async (req, res) => {
-  const { email, token, uid } = req.query;
+export async function handler(event, context) {
+  const params = new URLSearchParams(event.rawUrl.split('?')[1]);
+  const email = params.get('email');
+  const token = params.get('token');
+  const uid = params.get('uid');
 
-  if (!email || !token || !uid) {
-    return res.redirect(
-      `https://accounts.rekietalabs.com/email/failed?error=default`
-    );
-  }
+  const redirect = (reason = 'default') => ({
+    statusCode: 302,
+    headers: {
+      Location: `https://accounts.rekietalabs.com/email/failed?reason=${reason}`
+    }
+  });
+
+  if (!email || !token || !uid) return redirect('default');
 
   try {
-    // Fetch the user by ID
     const { data: user, error } = await supabase.auth.admin.getUserById(uid);
 
-    if (error || !user || user.email !== email) {
-      return res.redirect(
-        `https://accounts.rekietalabs.com/email/failed?error=nomatch`
-      );
-    }
+    if (error || !user || user.email !== email) return redirect('nomatch');
 
     const { email_token, email_token_expiry } = user.user_metadata || {};
 
-    if (!email_token || !email_token_expiry) {
-      return res.redirect(
-        `https://accounts.rekietalabs.com/email/failed?reason=revoked`
-      );
-    }
+    if (!email_token || !email_token_expiry) return redirect('revoked');
 
-    // Check token validity
     const now = new Date();
     const expiryDate = new Date(email_token_expiry);
 
-    if (token !== email_token || now > expiryDate) {
-      return res.redirect(
-        `https://accounts.rekietalabs.com/email/failed?reason=expired`
-      );
-    }
+    if (token !== email_token || now > expiryDate) return redirect('expired');
 
-    // Already verified
-    if (user.email_confirmed_at) {
-      return res.redirect(
-        `https://accounts.rekietalabs.com/email/failed?reason=already`
-      );
-    }
+    if (user.email_confirmed_at) return redirect('already');
 
-    // Update user: mark email as confirmed
     const update = await supabase.auth.admin.updateUserById(uid, {
       email_confirm: true,
       user_metadata: {
@@ -60,19 +46,16 @@ export default async (req, res) => {
       }
     });
 
-    if (update.error) {
-      return res.redirect(
-        `https://accounts.rekietalabs.com/email/failed?reason=supabasefail`
-      );
-    }
+    if (update.error) return redirect('supabasefail');
 
-    return res.redirect(
-      `https://accounts.rekietalabs.com/email/confirmed`
-    );
+    return {
+      statusCode: 302,
+      headers: {
+        Location: 'https://accounts.rekietalabs.com/email/confirmed'
+      }
+    };
   } catch (err) {
     console.error('Unexpected confirm error:', err);
-    return res.redirect(
-      `https://accounts.rekietalabs.com/email/failed?reason=default`
-    );
+    return redirect('default');
   }
-};
+}
