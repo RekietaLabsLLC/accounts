@@ -29,7 +29,7 @@ export default async (req, res) => {
 
     if (!email_token || !email_token_expiry) {
       return res.redirect(
-        `https://accounts.rekietalabs.com/email/failed?error=revoked`
+        `https://accounts.rekietalabs.com/email/failed?reason=revoked`
       );
     }
 
@@ -39,14 +39,14 @@ export default async (req, res) => {
 
     if (token !== email_token || now > expiryDate) {
       return res.redirect(
-        `https://accounts.rekietalabs.com/email/failed?error=expired`
+        `https://accounts.rekietalabs.com/email/failed?reason=expired`
       );
     }
 
     // Already verified
     if (user.email_confirmed_at) {
       return res.redirect(
-        `https://accounts.rekietalabs.com/email/failed?error=already`
+        `https://accounts.rekietalabs.com/email/failed?reason=already`
       );
     }
 
@@ -62,7 +62,7 @@ export default async (req, res) => {
 
     if (update.error) {
       return res.redirect(
-        `https://accounts.rekietalabs.com/email/failed?error=supabasefail`
+        `https://accounts.rekietalabs.com/email/failed?reason=supabasefail`
       );
     }
 
@@ -72,7 +72,7 @@ export default async (req, res) => {
   } catch (err) {
     console.error('Unexpected confirm error:', err);
     return res.redirect(
-      `https://accounts.rekietalabs.com/email/failed?error=default`
+      `https://accounts.rekietalabs.com/email/failed?reason=default`
     );
   }
 };
