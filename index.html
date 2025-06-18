@@ -52,14 +52,29 @@
       animation: pulse 2s infinite;
     }
 
-    /* Waves */
-    .waves {
+    /* Wave Wrapper */
+    .wave-container {
       position: absolute;
+      width: 100%;
       bottom: 0;
       left: 0;
-      width: 100%;
-      height: auto;
       z-index: -1;
+    }
+
+    .wave {
+      position: absolute;
+      width: 200%;
+      height: 100px;
+      bottom: 0;
+      left: 0;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%231987a1" fill-opacity="0.3" d="M0,160 C360,240 1080,80 1440,160 L1440,320 L0,320 Z"></path></svg>') repeat-x;
+      background-size: contain;
+      animation: waveMove 10s linear infinite;
+    }
+
+    @keyframes waveMove {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
     }
 
     /* Animations */
@@ -99,16 +114,10 @@
     <div class="fun-message">🚀 We're cooking up something amazing. Stay tuned!</div>
   </div>
 
-  <!-- Animated SVG Wave Background -->
-  <svg class="waves" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
-    <path fill="#1987a1" fill-opacity="0.2">
-      <animate attributeName="d" dur="10s" repeatCount="indefinite"
-        values="
-        M0,160 C360,240 1080,80 1440,160 L1440,320 L0,320 Z;
-        M0,120 C360,80 1080,240 1440,120 L1440,320 L0,320 Z;
-        M0,160 C360,240 1080,80 1440,160 L1440,320 L0,320 Z" />
-    </path>
-  </svg>
+  <!-- Reliable CSS Wave Background -->
+  <div class="wave-container">
+    <div class="wave"></div>
+  </div>
 
   <!-- Rotating Features -->
   <script>
@@ -125,8 +134,8 @@
 
     function showNextMessage() {
       featureDiv.style.opacity = 0;
-      featureDiv.style.animation = "none"; // Reset animation
-      void featureDiv.offsetWidth; // Force reflow
+      featureDiv.style.animation = "none";
+      void featureDiv.offsetWidth;
       setTimeout(() => {
         featureDiv.textContent = messages[current];
         featureDiv.style.opacity = 1;
@@ -137,5 +146,6 @@
 
     setInterval(showNextMessage, 3000);
   </script>
+
 </body>
 </html>
