@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MyLabs Accounts – Coming Soon!</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0e0e0e;
+      font-family: 'Segoe UI', sans-serif;
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      color: #ffd700;
+      animation: fadeSlideIn 1.5s ease-out forwards;
+    }
+
+    .features {
+      font-size: 1.4rem;
+      height: 2em;
+      margin-bottom: 40px;
+      color: #ccc;
+      animation: fadeIn 1s ease-out;
+    }
+
+    .notify {
+      background-color: #ffd700;
+      color: #000;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 30px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .notify:hover {
+      transform: scale(1.1);
+    }
+
+    @keyframes fadeSlideIn {
+      0% {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>MyLabs Accounts</h1>
+  <div class="features" id="features">Connecting all of RekietaLabs...</div>
+  <button class="notify">Notify Me</button>
+
+  <script>
+    const messages = [
+      "Secure and easy login",
+      "Connect across RekietaLabs services",
+      "Customize your profile",
+      "Track progress in MyLabs games",
+      "More features coming soon..."
+    ];
+
+    let current = 0;
+    const featureDiv = document.getElementById('features');
+
+    setInterval(() => {
+      featureDiv.style.opacity = 0;
+      setTimeout(() => {
+        featureDiv.textContent = messages[current];
+        featureDiv.style.opacity = 1;
+        current = (current + 1) % messages.length;
+      }, 500);
+    }, 3000);
+  </script>
+</body>
+</html>
