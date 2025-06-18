@@ -8,81 +8,140 @@
     body {
       margin: 0;
       padding: 0;
-      background: #0e0e0e;
+      background: radial-gradient(circle at center, #1a1a1a, #0a0a0a);
       font-family: 'Segoe UI', sans-serif;
       color: #ffffff;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      overflow: hidden;
       flex-direction: column;
+      min-height: 100vh;
+      overflow: hidden;
       text-align: center;
+      position: relative;
     }
 
+    /* Animated floating background */
+    .background {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -1;
+    }
+
+    .circle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 215, 0, 0.08);
+      animation: float 20s linear infinite;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) scale(0.3);
+        opacity: 0;
+      }
+      50% {
+        opacity: 0.4;
+      }
+      100% {
+        transform: translateY(-10vh) scale(1);
+        opacity: 0;
+      }
+    }
+
+    /* Logo */
+    .logo {
+      width: 120px;
+      margin-bottom: 20px;
+      animation: fadeSlideIn 1.2s ease-out;
+    }
+
+    /* Title */
     h1 {
       font-size: 3rem;
-      margin-bottom: 20px;
       color: #ffd700;
-      animation: fadeSlideIn 1.5s ease-out forwards;
+      margin-bottom: 10px;
+      animation: glow 2s ease-in-out infinite alternate;
     }
 
+    /* Subtitle */
     .features {
-      font-size: 1.4rem;
-      height: 2em;
+      font-size: 1.3rem;
+      min-height: 2em;
       margin-bottom: 40px;
       color: #ccc;
       animation: fadeIn 1s ease-out;
     }
 
-    .notify {
-      background-color: #ffd700;
-      color: #000;
-      padding: 12px 24px;
-      border: none;
-      border-radius: 30px;
+    /* Footer Message */
+    .fun-message {
       font-size: 1rem;
-      cursor: pointer;
-      transition: transform 0.3s ease;
+      color: #ffd700;
+      margin-top: 20px;
+      animation: pulse 2s infinite;
     }
 
-    .notify:hover {
-      transform: scale(1.1);
-    }
-
+    /* Animations */
     @keyframes fadeSlideIn {
-      0% {
-        opacity: 0;
-        transform: translateY(-30px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      0% { opacity: 0; transform: translateY(-30px); }
+      100% { opacity: 1; transform: translateY(0); }
     }
 
     @keyframes fadeIn {
-      0% {
-        opacity: 0;
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.05); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700, 0 0 30px #ffea00;
       }
-      100% {
-        opacity: 1;
+      to {
+        text-shadow: 0 0 15px #ffff00, 0 0 25px #ffd700, 0 0 35px #ffee00;
       }
     }
   </style>
 </head>
 <body>
+
+  <!-- Floating background animation -->
+  <div class="background">
+    <div class="circle" style="width: 60px; height: 60px; left: 5%; animation-delay: 0s;"></div>
+    <div class="circle" style="width: 80px; height: 80px; left: 20%; animation-delay: 4s;"></div>
+    <div class="circle" style="width: 100px; height: 100px; left: 40%; animation-delay: 8s;"></div>
+    <div class="circle" style="width: 70px; height: 70px; left: 60%; animation-delay: 12s;"></div>
+    <div class="circle" style="width: 50px; height: 50px; left: 80%; animation-delay: 16s;"></div>
+  </div>
+
+  <!-- Logo -->
+  <img src="MyLabsLogo.png" alt="MyLabs Logo" class="logo" />
+
+  <!-- Main Title -->
   <h1>MyLabs Accounts</h1>
+
+  <!-- Rotating Features -->
   <div class="features" id="features">Connecting all of RekietaLabs...</div>
-  <button class="notify">Notify Me</button>
+
+  <!-- Fun Message -->
+  <div class="fun-message">
+    🚀 We're cooking up something amazing. Stay tuned!
+  </div>
 
   <script>
     const messages = [
       "Secure and easy login",
       "Connect across RekietaLabs services",
-      "Customize your profile",
-      "Track progress in MyLabs games",
-      "More features coming soon..."
+      "Upload and manage your 3D prints",
+      "Customize your MyLabs experience",
+      "Coming soon to accounts.rekietalabs.com"
     ];
 
     let current = 0;
@@ -97,5 +156,6 @@
       }, 500);
     }, 3000);
   </script>
+
 </body>
 </html>
