@@ -5,60 +5,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MyLabs Accounts – Coming Soon!</title>
   <style>
-    body {
+    html, body {
       margin: 0;
       padding: 0;
-      background: radial-gradient(circle at center, #1a1a1a, #0a0a0a);
       font-family: 'Segoe UI', sans-serif;
       color: #ffffff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      min-height: 100vh;
       overflow: hidden;
-      text-align: center;
-      position: relative;
+      height: 100%;
+      background: black;
     }
 
-    /* Animated floating background */
-    .background {
+    canvas {
       position: absolute;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
+      top: 0;
+      left: 0;
       z-index: -1;
     }
 
-    .circle {
-      position: absolute;
-      border-radius: 50%;
-      background: rgba(255, 215, 0, 0.08);
-      animation: float 20s linear infinite;
+    .container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      height: 100vh;
+      padding: 20px;
     }
 
-    @keyframes float {
-      0% {
-        transform: translateY(100vh) scale(0.3);
-        opacity: 0;
-      }
-      50% {
-        opacity: 0.4;
-      }
-      100% {
-        transform: translateY(-10vh) scale(1);
-        opacity: 0;
-      }
-    }
-
-    /* Logo */
-    .logo {
-      width: 120px;
+    img.logo {
+      width: 130px;
       margin-bottom: 20px;
       animation: fadeSlideIn 1.2s ease-out;
     }
 
-    /* Title */
     h1 {
       font-size: 3rem;
       color: #ffd700;
@@ -66,16 +47,14 @@
       animation: glow 2s ease-in-out infinite alternate;
     }
 
-    /* Subtitle */
     .features {
       font-size: 1.3rem;
       min-height: 2em;
-      margin-bottom: 40px;
+      margin-bottom: 30px;
       color: #ccc;
       animation: fadeIn 1s ease-out;
     }
 
-    /* Footer Message */
     .fun-message {
       font-size: 1rem;
       color: #ffd700;
@@ -83,7 +62,6 @@
       animation: pulse 2s infinite;
     }
 
-    /* Animations */
     @keyframes fadeSlideIn {
       0% { opacity: 0; transform: translateY(-30px); }
       100% { opacity: 1; transform: translateY(0); }
@@ -112,29 +90,26 @@
 </head>
 <body>
 
-  <!-- Floating background animation -->
-  <div class="background">
-    <div class="circle" style="width: 60px; height: 60px; left: 5%; animation-delay: 0s;"></div>
-    <div class="circle" style="width: 80px; height: 80px; left: 20%; animation-delay: 4s;"></div>
-    <div class="circle" style="width: 100px; height: 100px; left: 40%; animation-delay: 8s;"></div>
-    <div class="circle" style="width: 70px; height: 70px; left: 60%; animation-delay: 12s;"></div>
-    <div class="circle" style="width: 50px; height: 50px; left: 80%; animation-delay: 16s;"></div>
+  <!-- Background starfield -->
+  <canvas id="stars"></canvas>
+
+  <div class="container">
+    <!-- Logo -->
+    <img src="MyLabsLogo.png" alt="MyLabs Logo" class="logo" />
+
+    <!-- Main Title -->
+    <h1>MyLabs Accounts</h1>
+
+    <!-- Rotating Features -->
+    <div class="features" id="features">Connecting all of RekietaLabs...</div>
+
+    <!-- Fun Message -->
+    <div class="fun-message">
+      🚀 We're cooking up something amazing. Stay tuned!
+    </div>
   </div>
 
-  <!-- Logo -->
-  <img src="MyLabsLogo.png" alt="MyLabs Logo" class="logo" />
-
-  <!-- Main Title -->
-  <h1>MyLabs Accounts</h1>
-
-  <!-- Rotating Features -->
-  <div class="features" id="features">Connecting all of RekietaLabs...</div>
-
-  <!-- Fun Message -->
-  <div class="fun-message">
-    🚀 We're cooking up something amazing. Stay tuned!
-  </div>
-
+  <!-- JS: Rotating Text -->
   <script>
     const messages = [
       "Secure and easy login",
@@ -157,5 +132,65 @@
     }, 3000);
   </script>
 
+  <!-- JS: Starfield Background -->
+  <script>
+    const canvas = document.getElementById('stars');
+    const ctx = canvas.getContext('2d');
+
+    let stars = [];
+    const numStars = 120;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    function createStars() {
+      stars = [];
+      for (let i = 0; i < numStars; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 2,
+          speed: Math.random() * 0.5 + 0.2
+        });
+      }
+    }
+
+    function drawStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+      for (let star of stars) {
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function updateStars() {
+      for (let star of stars) {
+        star.y -= star.speed;
+        if (star.y < 0) {
+          star.y = canvas.height;
+          star.x = Math.random() * canvas.width;
+        }
+      }
+    }
+
+    function animate() {
+      drawStars();
+      updateStars();
+      requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      createStars();
+    });
+
+    resizeCanvas();
+    createStars();
+    animate();
+  </script>
 </body>
 </html>
