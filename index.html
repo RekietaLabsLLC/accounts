@@ -8,29 +8,63 @@
     html, body {
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', sans-serif;
-      color: #ffffff;
-      overflow: hidden;
       height: 100%;
-      background: black;
+      overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0a0a0a;
     }
 
-    canvas {
+    /* SVG Waves */
+    .waves {
       position: absolute;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
       top: 0;
       left: 0;
       z-index: -1;
     }
 
+    .wave {
+      position: absolute;
+      width: 200%;
+      height: 100%;
+      background-repeat: repeat no-repeat;
+      background-position: 0 bottom;
+      transform: translate3d(0, 0, 0);
+      animation: wave 10s linear infinite;
+      opacity: 0.3;
+    }
+
+    .wave1 {
+      background-image: radial-gradient(circle at 50% 50%, #1987a1 10%, transparent 70%);
+      animation-duration: 12s;
+    }
+
+    .wave2 {
+      background-image: radial-gradient(circle at 60% 60%, #1987a1 10%, transparent 70%);
+      animation-duration: 18s;
+      opacity: 0.15;
+    }
+
+    @keyframes wave {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
     .container {
-      position: relative;
       z-index: 1;
+      position: relative;
+      height: 100%;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       text-align: center;
-      height: 100vh;
       padding: 20px;
     }
 
@@ -42,7 +76,7 @@
 
     h1 {
       font-size: 3rem;
-      color: #ffd700;
+      color: #1987a1;
       margin-bottom: 10px;
       animation: glow 2s ease-in-out infinite alternate;
     }
@@ -51,25 +85,26 @@
       font-size: 1.3rem;
       min-height: 2em;
       margin-bottom: 30px;
-      color: #ccc;
-      animation: fadeIn 1s ease-out;
+      color: #1987a1;
+      animation: slideInRight 0.8s ease-out;
     }
 
     .fun-message {
       font-size: 1rem;
-      color: #ffd700;
+      color: #1987a1;
       margin-top: 20px;
       animation: pulse 2s infinite;
     }
 
+    /* Animations */
     @keyframes fadeSlideIn {
       0% { opacity: 0; transform: translateY(-30px); }
       100% { opacity: 1; transform: translateY(0); }
     }
 
-    @keyframes fadeIn {
-      0% { opacity: 0; }
-      100% { opacity: 1; }
+    @keyframes slideInRight {
+      0% { opacity: 0; transform: translateX(100%); }
+      100% { opacity: 1; transform: translateX(0); }
     }
 
     @keyframes pulse {
@@ -80,36 +115,36 @@
 
     @keyframes glow {
       from {
-        text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700, 0 0 30px #ffea00;
+        text-shadow: 0 0 10px #1987a1, 0 0 20px #1987a1, 0 0 30px #1987a1;
       }
       to {
-        text-shadow: 0 0 15px #ffff00, 0 0 25px #ffd700, 0 0 35px #ffee00;
+        text-shadow: 0 0 15px #1987a1, 0 0 25px #1987a1, 0 0 35px #1987a1;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- Background starfield -->
-  <canvas id="stars"></canvas>
+  <!-- Wavy background -->
+  <div class="waves">
+    <div class="wave wave1"></div>
+    <div class="wave wave2"></div>
+  </div>
 
+  <!-- Content -->
   <div class="container">
-    <!-- Logo -->
     <img src="MyLabsLogo.png" alt="MyLabs Logo" class="logo" />
 
-    <!-- Main Title -->
     <h1>MyLabs Accounts</h1>
 
-    <!-- Rotating Features -->
     <div class="features" id="features">Connecting all of RekietaLabs...</div>
 
-    <!-- Fun Message -->
     <div class="fun-message">
       🚀 We're cooking up something amazing. Stay tuned!
     </div>
   </div>
 
-  <!-- JS: Rotating Text -->
+  <!-- Rotating features logic -->
   <script>
     const messages = [
       "Secure and easy login",
@@ -122,75 +157,20 @@
     let current = 0;
     const featureDiv = document.getElementById('features');
 
-    setInterval(() => {
+    function showNextMessage() {
       featureDiv.style.opacity = 0;
+      featureDiv.style.animation = "none"; // Reset animation
+      void featureDiv.offsetWidth; // Trigger reflow
       setTimeout(() => {
         featureDiv.textContent = messages[current];
         featureDiv.style.opacity = 1;
+        featureDiv.style.animation = "slideInRight 0.8s ease-out";
         current = (current + 1) % messages.length;
       }, 500);
-    }, 3000);
+    }
+
+    setInterval(showNextMessage, 3000);
   </script>
 
-  <!-- JS: Starfield Background -->
-  <script>
-    const canvas = document.getElementById('stars');
-    const ctx = canvas.getContext('2d');
-
-    let stars = [];
-    const numStars = 120;
-
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-
-    function createStars() {
-      stars = [];
-      for (let i = 0; i < numStars; i++) {
-        stars.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          size: Math.random() * 2,
-          speed: Math.random() * 0.5 + 0.2
-        });
-      }
-    }
-
-    function drawStars() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-      for (let star of stars) {
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-
-    function updateStars() {
-      for (let star of stars) {
-        star.y -= star.speed;
-        if (star.y < 0) {
-          star.y = canvas.height;
-          star.x = Math.random() * canvas.width;
-        }
-      }
-    }
-
-    function animate() {
-      drawStars();
-      updateStars();
-      requestAnimationFrame(animate);
-    }
-
-    window.addEventListener('resize', () => {
-      resizeCanvas();
-      createStars();
-    });
-
-    resizeCanvas();
-    createStars();
-    animate();
-  </script>
 </body>
 </html>
