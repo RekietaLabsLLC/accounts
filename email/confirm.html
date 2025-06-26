@@ -29,37 +29,19 @@
   <p>Please wait a moment.</p>
 
   <script>
-    (async () => {
+    (function () {
       const params = new URLSearchParams(window.location.search);
-      const email = params.get("email");
-      const token = params.get("token");
       const uid = params.get("uid");
+      const email = params.get("email");
 
-      if (!email || !token || !uid) {
-        window.location.href = "https://accounts.rekietalabs.com/email/failed.html?reason=default";
+      if (!uid || !email) {
+        window.location.href = "https://accounts.rekietalabs.com/email/failed?reason=default";
         return;
       }
 
-      try {
-        const response = await fetch("/.netlify/functions/confirm", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, token, uid }),
-        });
-
-        const result = await response.json();
-
-        if (response.ok && result.success) {
-          window.location.href = "https://accounts.rekietalabs.com/email/confirmed";
-        } else {
-          const reason = encodeURIComponent(result.reason || "default");
-          window.location.href = `https://accounts.rekietalabs.com/email/failed.html?reason=${reason}`;
-        }
-      } catch (err) {
-        window.location.href = "https://accounts.rekietalabs.com/email/failed.html?reason=default";
-      }
+      // Perform GET redirect to the Netlify function with uid & email
+      const redirectUrl = `/.netlify/functions/confirm?uid=${encodeURIComponent(uid)}&email=${encodeURIComponent(email)}`;
+      window.location.href = redirectUrl;
     })();
   </script>
 </body>
