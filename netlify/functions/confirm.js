@@ -14,40 +14,39 @@ export async function handler(event, context) {
   const redirect = (reason = 'default') => ({
     statusCode: 302,
     headers: {
-      Location: `https://accounts.rekietalabs.com/email/failed?error={reason}`
+      Location: `https://accounts.rekietalabs.com/email/failed?reason=${reason}`
     }
   });
 
-  // 1. Ensure required fields are present
   if (!email || !uid) return redirect('default');
 
   try {
-    // 2. Fetch user from Supabase
+    // Step 1: Fetch user by ID
     const { data: user, error } = await supabase.auth.admin.getUserById(uid);
-
     if (error || !user) return redirect('notfound');
+
+    // Step 2: Ensure emails match
     if (user.email !== email) return redirect('nomatch');
 
-    // 3. Check if already verified
+    // Step 3: Check if already verified
     if (user.email_confirmed_at) return redirect('already');
 
-    // 4. Confirm the email
+    // Step 4: Confirm email
     const update = await supabase.auth.admin.updateUserById(uid, {
       email_confirm: true
     });
 
     if (update.error) return redirect('supabasefail');
 
-    // 5. Success
+    // ✅ Success!
     return {
       statusCode: 302,
       headers: {
         Location: 'https://accounts.rekietalabs.com/email/confirmed'
       }
     };
-
   } catch (err) {
-    console.error('Confirm error:', err);
+    console.error('Unexpected confirm error:', err);
     return redirect('default');
   }
 }
