@@ -25,8 +25,8 @@ export async function handler(event, context) {
     const { data: user, error } = await supabase.auth.admin.getUserById(uid);
     if (error || !user) return redirect('notfound');
 
-    // Step 2: Ensure emails match
-    if (user.email !== email) return redirect('nomatch');
+    // ✅ Step 2: Ensure emails match (case-insensitive)
+    if (user.email.toLowerCase() !== email.toLowerCase()) return redirect('nomatch');
 
     // Step 3: Check if already verified
     if (user.email_confirmed_at) return redirect('already');
