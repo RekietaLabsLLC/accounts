@@ -1,4 +1,5 @@
 // netlify/functions/confirm.js
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
@@ -7,47 +8,79 @@ const supabase = createClient(
 );
 
 export async function handler(event, context) {
-  const params = new URLSearchParams(event.rawUrl.split('?')[1]);
-  const email = params.get('email');
-  const uid = params.get('uid');
-
-  const redirect = (reason = 'default') => ({
-    statusCode: 302,
-    headers: {
-      Location: `https://accounts.rekietalabs.com/email/failed?reason=${reason}`
-    }
-  });
-
-  if (!email || !uid) return redirect('default');
-
   try {
-    const { data: user, error } = await supabase.auth.admin.getUserById(uid);
-    if (error || !user) return redirect('notfound');
+    // Extract query params
+    const params = new URLSearchParams(event.rawUrl.split('?')[1]);
+    const email = params.get('email');
+    const uid = params.get('uid');
 
-    if (user.email !== email) return redirect('nomatch');
+    console.log('Confirm endpoint called with:', { uid, email });
 
-    if (user.email_confirmed_at) return redirect('already');
-
-    const update = await supabase.auth.admin.updateUserById(uid, {
-      email_confirm: true
+    const redirect = (reason = 'default') => ({
+      statusCode: 302,
+      headers: {
+        Location: `https://accounts.rekietalabs.com/email/failed?reason=${reason}`
+      }
     });
 
-    if (update.error) return redirect('supabasefail');
+    if (!email || !uid) {
+      console.log('Missing required parameters.');
+      return redirect('default');
+    }
 
+    // Fetch user by Supabase user ID
+    const { data: user, error } = await supabase.auth.admin.getUserById(uid);
+
+    console.log('Supabase user result:', { user, error });
+
+    if (error || !user) {
+      console.log('No user found for provided UID.');
+      return redirect('notfound');
+    }
+
+    // Compare email case-insensitively
+    if (
+      user.email.toLowerCase() !== email.toLowerCase()
+    ) {
+      console.log(
+        `Email mismatch. Supabase has "${user.email}", but link provided "${email}".`
+      );
+      return redirect('nomatch');
+    }
+
+    // Check if already verified
+    if (user.email_confirmed_at) {
+      console.log('Email already confirmed.');
+      return redirect('already');
+    }
+
+    // Update user to mark email as confirmed
+    const update = await supabase.auth.admin.updateUserById(uid, {
+      email_confirm: true,
+    });
+
+    if (update.error) {
+      console.error('Error updating user confirmation:', update.error);
+      return redirect('supabasefail');
+    }
+
+    console.log('Email successfully confirmed for user:', uid);
+
+    // Success — redirect to confirmed page
     return {
       statusCode: 302,
       headers: {
         Location: 'https://accounts.rekietalabs.com/email/confirmed'
       }
     };
+
   } catch (err) {
-    console.error('Unexpected confirm error:', err);
+    console.error('Unexpected confirm.js error:', err);
     return {
-      statusCode: 500,
-      body: JSON.stringify({
-        error: err.message,
-        stack: err.stack,
-      }),
+      statusCode: 302,
+      headers: {
+        Location: 'https://accounts.rekietalabs.com/email/failed?reason=default'
+      }
     };
   }
 }
