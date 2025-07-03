@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up - MyLabs</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #111;
+      color: #1753aa;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+      Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    .panel {
+      position: absolute;
+      top: 0;
+      left: 100%;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2em;
+      text-align: center;
+      padding: 20px;
+      box-sizing: border-box;
+      transition: left 0.8s ease;
+    }
+
+    .panel.active {
+      left: 0;
+    }
+
+    .panel.out-left {
+      left: -100%;
+    }
+
+    input, button {
+      display: block;
+      margin: 20px auto;
+      font-size: 1em;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+    }
+
+    input {
+      width: 250px;
+      text-align: center;
+    }
+
+    button {
+      background-color: #1753aa;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .tips {
+      font-size: 1.2em;
+    }
+
+    .envelope {
+      max-width: 100px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Panels -->
+  <div class="panel" id="intro1">Are you ready to level up your RekietaLabs Experience with MyLabs?</div>
+  <div class="panel" id="intro2">Well then, Let’s get started!</div>
+
+  <div class="panel" id="name-panel">
+    <div>
+      <p>What’s Your First Name?</p>
+      <input type="text" id="first-name" placeholder="First Name"/>
+      <button onclick="nextQuestion('first_name')">Next</button>
+    </div>
+  </div>
+
+  <div class="panel" id="lastname-panel">
+    <div>
+      <p>What’s Your Last Name?</p>
+      <input type="text" id="last-name" placeholder="Last Name"/>
+      <button onclick="nextQuestion('last_name')">Next</button>
+    </div>
+  </div>
+
+  <div class="panel" id="email-panel">
+    <div>
+      <p>What’s Your Email?</p>
+      <input type="email" id="email" placeholder="Email Address"/>
+      <button onclick="nextQuestion('email')">Next</button>
+    </div>
+  </div>
+
+  <div class="panel" id="password-panel">
+    <div>
+      <p>Create a Password</p>
+      <input type="password" id="password" placeholder="Password"/>
+      <button onclick="submitSignup()">Sign Up</button>
+    </div>
+  </div>
+
+  <div class="panel" id="loading-panel">
+    <div>
+      <p>Setting up your account...</p>
+      <div class="tips" id="tip-text"></div>
+      <div style="margin-top:20px;">
+        <img src="https://i.gifer.com/YCZH.gif" width="50" alt="Loading spinner" />
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="confirm-panel">
+    <div>
+      <img src="https://media.tenor.com/jM9Zv3Y-qM4AAAAi/check-mark.gif" class="envelope" alt="Confirmation"/>
+      <h2>Please confirm your email</h2>
+      <p id="confirm-email-text"></p>
+    </div>
+  </div>
+
+  <script>
+    const panels = [
+      "intro1",
+      "intro2",
+      "name-panel",
+      "lastname-panel",
+      "email-panel",
+      "password-panel",
+      "loading-panel",
+      "confirm-panel"
+    ];
+
+    let userData = {};
+    let currentPanelIndex = 0;
+    let transitionInProgress = false;
+
+    function showPanel(id) {
+      document.querySelectorAll(".panel").forEach(p => {
+        p.classList.remove("active", "out-left");
+      });
+      const panel = document.getElementById(id);
+      panel.classList.add("active");
+    }
+
+    function nextPanel() {
+      if (transitionInProgress) return;
+      transitionInProgress = true;
+
+      const current = document.getElementById(panels[currentPanelIndex]);
+      current.classList.add("out-left");
+
+      currentPanelIndex++;
+      if (currentPanelIndex >= panels.length) currentPanelIndex = panels.length - 1;
+
+      const next = document.getElementById(panels[currentPanelIndex]);
+      setTimeout(() => {
+        showPanel(panels[currentPanelIndex]);
+        transitionInProgress = false;
+      }, 800);
+    }
+
+    function nextQuestion(field) {
+      if (transitionInProgress) return;
+
+      if (field === "first_name") {
+        userData.first_name = document.getElementById("first-name").value;
+        if (!userData.first_name) return alert("Please enter your first name.");
+      }
+      if (field === "last_name") {
+        userData.last_name = document.getElementById("last-name").value;
+        if (!userData.last_name) return alert("Please enter your last name.");
+      }
+      if (field === "email") {
+        userData.email = document.getElementById("email").value;
+        if (!userData.email) return alert("Please enter your email.");
+      }
+
+      nextPanel();
+    }
+
+    function submitSignup() {
+      if (transitionInProgress) return;
+
+      userData.password = document.getElementById("password").value;
+      if (!userData.password) return alert("Please enter a password.");
+
+      nextPanel(); // show loading screen
+
+      const tips = [
+        "Tip: Did you know you can now publish your own models on our community Marketplace?",
+        "Tip: Did you know you can customize your MyLabs Account any way you like?",
+        "Tip: New features drop every month. Stay tuned!"
+      ];
+
+      document.getElementById("tip-text").innerText =
+        tips[Math.floor(Math.random() * tips.length)];
+
+      setTimeout(() => {
+        fetch("https://api.rekietalabs.com/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(userData)
+        })
+        .then(res => res.json())
+        .then(result => {
+          console.log(result);
+          if (result.user_id) {
+            const confirmUrl = `https://accounts.rekietalabs.com/email/confirm?uid=${result.user_id}&email=${encodeURIComponent(userData.email)}`;
+            document.getElementById("confirm-email-text").innerText =
+              `A confirmation email has been sent to ${userData.email}. Please check your inbox to activate your account.`;
+            nextPanel();
+          } else {
+            alert(result.error || "Signup failed.");
+            window.location.reload();
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          alert("Network error. Please try again.");
+          window.location.reload();
+        });
+      }, 2000);
+    }
+
+    // Start intro slides
+    window.onload = () => {
+      showPanel("intro1");
+      setTimeout(() => {
+        nextPanel();
+        setTimeout(() => {
+          nextPanel();
+        }, 2500);
+      }, 2500);
+    };
+  </script>
+</body>
+</html>
