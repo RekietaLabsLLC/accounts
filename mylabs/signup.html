@@ -2,243 +2,269 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sign Up - MyLabs</title>
+  <title>MyLabs Signup</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
       margin: 0;
-      background-color: #111;
-      color: #1753aa;
+      background-color: #0b0b0b;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-      Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      color: #1753aa;
       overflow: hidden;
-      height: 100vh;
     }
 
-    .panel {
-      position: absolute;
-      top: 0;
-      left: 100%;
+    #container {
+      position: relative;
       width: 100%;
-      height: 100%;
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 2em;
+    }
+
+    .slide {
+      position: absolute;
+      width: 80%;
+      max-width: 500px;
       text-align: center;
+      opacity: 0;
+      transform: translateX(100%);
+      transition: transform 0.6s ease, opacity 0.6s ease;
       padding: 20px;
-      box-sizing: border-box;
-      transition: left 0.8s ease;
+      background: rgba(23, 83, 170, 0.1);
+      border-radius: 8px;
     }
 
-    .panel.active {
-      left: 0;
+    .slide.active {
+      opacity: 1;
+      transform: translateX(0);
     }
 
-    .panel.out-left {
-      left: -100%;
+    .slide.exit-left {
+      transform: translateX(-100%);
+      opacity: 0;
     }
 
-    input, button {
-      display: block;
-      margin: 20px auto;
-      font-size: 1em;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
+    h1, h2 {
+      margin: 10px 0;
+      font-weight: normal;
     }
 
     input {
-      width: 250px;
-      text-align: center;
+      padding: 10px;
+      margin-top: 15px;
+      width: 80%;
+      max-width: 300px;
+      border: 2px solid #1753aa;
+      border-radius: 4px;
+      font-size: 16px;
+      background: #0b0b0b;
+      color: #1753aa;
     }
 
     button {
+      margin-top: 20px;
+      padding: 12px 20px;
       background-color: #1753aa;
       color: #fff;
+      border: none;
+      border-radius: 4px;
       cursor: pointer;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #0e3b7a;
+    }
+
+    .spinner {
+      border: 4px solid rgba(23,83,170,0.3);
+      border-top: 4px solid #1753aa;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg);}
+      100% { transform: rotate(360deg);}
     }
 
     .tips {
-      font-size: 1.2em;
-    }
-
-    .envelope {
-      max-width: 100px;
-      margin-bottom: 20px;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #aaa;
     }
   </style>
 </head>
 <body>
-
-  <!-- Panels -->
-  <div class="panel" id="intro1">Are you ready to level up your RekietaLabs Experience with MyLabs?</div>
-  <div class="panel" id="intro2">Well then, Let’s get started!</div>
-
-  <div class="panel" id="name-panel">
-    <div>
-      <p>What’s Your First Name?</p>
-      <input type="text" id="first-name" placeholder="First Name"/>
-      <button onclick="nextQuestion('first_name')">Next</button>
-    </div>
-  </div>
-
-  <div class="panel" id="lastname-panel">
-    <div>
-      <p>What’s Your Last Name?</p>
-      <input type="text" id="last-name" placeholder="Last Name"/>
-      <button onclick="nextQuestion('last_name')">Next</button>
-    </div>
-  </div>
-
-  <div class="panel" id="email-panel">
-    <div>
-      <p>What’s Your Email?</p>
-      <input type="email" id="email" placeholder="Email Address"/>
-      <button onclick="nextQuestion('email')">Next</button>
-    </div>
-  </div>
-
-  <div class="panel" id="password-panel">
-    <div>
-      <p>Create a Password</p>
-      <input type="password" id="password" placeholder="Password"/>
-      <button onclick="submitSignup()">Sign Up</button>
-    </div>
-  </div>
-
-  <div class="panel" id="loading-panel">
-    <div>
-      <p>Setting up your account...</p>
-      <div class="tips" id="tip-text"></div>
-      <div style="margin-top:20px;">
-        <img src="https://i.gifer.com/YCZH.gif" width="50" alt="Loading spinner" />
-      </div>
-    </div>
-  </div>
-
-  <div class="panel" id="confirm-panel">
-    <div>
-      <img src="https://media.tenor.com/jM9Zv3Y-qM4AAAAi/check-mark.gif" class="envelope" alt="Confirmation"/>
-      <h2>Please confirm your email</h2>
-      <p id="confirm-email-text"></p>
-    </div>
+  <div id="container">
+    <!-- Slides will be injected here -->
   </div>
 
   <script>
-    const panels = [
-      "intro1",
-      "intro2",
-      "name-panel",
-      "lastname-panel",
-      "email-panel",
-      "password-panel",
-      "loading-panel",
-      "confirm-panel"
+    const container = document.getElementById('container');
+    const userData = {};
+
+    const slides = [
+      {
+        id: 'intro1',
+        html: `<h1>Are you ready to level up your RekietaLabs Experience with MyLabs?</h1>`
+      },
+      {
+        id: 'intro2',
+        html: `<h2>Well then, let’s get started!</h2>`
+      },
+      {
+        id: 'firstName',
+        html: `
+          <h2>What’s your first name?</h2>
+          <input type="text" id="firstNameInput" placeholder="First Name" />
+          <br>
+          <button onclick="saveAnswer('first_name')">Next</button>
+        `
+      },
+      {
+        id: 'lastName',
+        html: `
+          <h2>What’s your last name?</h2>
+          <input type="text" id="lastNameInput" placeholder="Last Name" />
+          <br>
+          <button onclick="saveAnswer('last_name')">Next</button>
+        `
+      },
+      {
+        id: 'email',
+        html: `
+          <h2>What’s your email address?</h2>
+          <input type="email" id="emailInput" placeholder="you@email.com" />
+          <br>
+          <button onclick="saveAnswer('email')">Next</button>
+        `
+      },
+      {
+        id: 'password',
+        html: `
+          <h2>Choose a password:</h2>
+          <input type="password" id="passwordInput" placeholder="Password" />
+          <br>
+          <button onclick="submitSignup()">Sign Up</button>
+        `
+      },
+      {
+        id: 'loading',
+        html: `
+          <h2>Setting up your account...</h2>
+          <div class="spinner"></div>
+          <div class="tips" id="tip"></div>
+        `
+      },
+      {
+        id: 'confirmEmail',
+        html: `
+          <h2>Almost there!</h2>
+          <p>Please check your email:</p>
+          <p id="confirmEmailAddress" style="font-weight:bold;"></p>
+          <img src="https://your-yellow-checkmark-gif-url-here.gif" alt="Yellow Checkmark" style="width:100px; margin-top:20px;">
+        `
+      },
+      {
+        id: 'success',
+        html: `
+          <h2>That's it!</h2>
+          <p>You have successfully activated your account.</p>
+          <p>You will be redirected in <span id="countdown">5</span> seconds to our login page.</p>
+        `
+      }
     ];
 
-    let userData = {};
-    let currentPanelIndex = 0;
-    let transitionInProgress = false;
+    let currentSlide = -1;
 
-    function showPanel(id) {
-      document.querySelectorAll(".panel").forEach(p => {
-        p.classList.remove("active", "out-left");
-      });
-      const panel = document.getElementById(id);
-      panel.classList.add("active");
+    function showNextSlide() {
+      if (currentSlide >= 0) {
+        const old = document.getElementById(slides[currentSlide].id);
+        old.classList.remove('active');
+        old.classList.add('exit-left');
+        setTimeout(() => old.remove(), 600);
+      }
+
+      currentSlide++;
+      if (currentSlide < slides.length) {
+        const newSlide = document.createElement('div');
+        newSlide.id = slides[currentSlide].id;
+        newSlide.classList.add('slide', 'active');
+        newSlide.innerHTML = slides[currentSlide].html;
+        container.appendChild(newSlide);
+
+        if (slides[currentSlide].id === 'loading') {
+          startLoading();
+        }
+      }
     }
 
-    function nextPanel() {
-      if (transitionInProgress) return;
-      transitionInProgress = true;
-
-      const current = document.getElementById(panels[currentPanelIndex]);
-      current.classList.add("out-left");
-
-      currentPanelIndex++;
-      if (currentPanelIndex >= panels.length) currentPanelIndex = panels.length - 1;
-
-      const next = document.getElementById(panels[currentPanelIndex]);
-      setTimeout(() => {
-        showPanel(panels[currentPanelIndex]);
-        transitionInProgress = false;
-      }, 800);
-    }
-
-    function nextQuestion(field) {
-      if (transitionInProgress) return;
-
-      if (field === "first_name") {
-        userData.first_name = document.getElementById("first-name").value;
-        if (!userData.first_name) return alert("Please enter your first name.");
-      }
-      if (field === "last_name") {
-        userData.last_name = document.getElementById("last-name").value;
-        if (!userData.last_name) return alert("Please enter your last name.");
-      }
-      if (field === "email") {
-        userData.email = document.getElementById("email").value;
-        if (!userData.email) return alert("Please enter your email.");
-      }
-
-      nextPanel();
+    function saveAnswer(field) {
+      const inputId = field + 'Input';
+      const value = document.getElementById(inputId)?.value?.trim();
+      if (!value) return alert("Please enter a value.");
+      userData[field] = value;
+      showNextSlide();
     }
 
     function submitSignup() {
-      if (transitionInProgress) return;
+      userData.password = document.getElementById('passwordInput').value;
 
-      userData.password = document.getElementById("password").value;
-      if (!userData.password) return alert("Please enter a password.");
+      showNextSlide();
 
-      nextPanel(); // show loading screen
-
-      const tips = [
-        "Tip: Did you know you can now publish your own models on our community Marketplace?",
-        "Tip: Did you know you can customize your MyLabs Account any way you like?",
-        "Tip: New features drop every month. Stay tuned!"
-      ];
-
-      document.getElementById("tip-text").innerText =
-        tips[Math.floor(Math.random() * tips.length)];
-
-      setTimeout(() => {
-        fetch("https://api.rekietalabs.com/signup", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(userData)
-        })
-        .then(res => res.json())
-        .then(result => {
-          console.log(result);
-          if (result.user_id) {
-            const confirmUrl = `https://accounts.rekietalabs.com/email/confirm?uid=${result.user_id}&email=${encodeURIComponent(userData.email)}`;
-            document.getElementById("confirm-email-text").innerText =
-              `A confirmation email has been sent to ${userData.email}. Please check your inbox to activate your account.`;
-            nextPanel();
-          } else {
-            alert(result.error || "Signup failed.");
-            window.location.reload();
-          }
-        })
-        .catch(err => {
-          console.error(err);
-          alert("Network error. Please try again.");
+      fetch('https://api.rekietalabs.com/signup', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(userData)
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.user_id) {
+          document.getElementById('confirmEmailAddress').innerText = userData.email;
+          showNextSlide();
+        } else {
+          alert("Signup failed: " + data.error);
           window.location.reload();
-        });
-      }, 2000);
+        }
+      })
+      .catch(err => {
+        alert("Network error: " + err.message);
+        window.location.reload();
+      });
     }
 
-    // Start intro slides
-    window.onload = () => {
-      showPanel("intro1");
+    function startLoading() {
+      const tips = [
+        "Tip: Did you know you can publish your own models on our community Marketplace?",
+        "Tip: Did you know you can customize your MyLabs Account any way you like?",
+        "Tip: Keep your password safe and secure!",
+        "Tip: More features coming to MyLabs soon!"
+      ];
+      const tipElement = document.getElementById('tip');
+      let index = 0;
+      tipElement.innerText = tips[index];
+
+      const interval = setInterval(() => {
+        index = (index + 1) % tips.length;
+        tipElement.innerText = tips[index];
+      }, 3000);
+
       setTimeout(() => {
-        nextPanel();
-        setTimeout(() => {
-          nextPanel();
-        }, 2500);
-      }, 2500);
-    };
+        clearInterval(interval);
+        showNextSlide();
+      }, 5000);
+    }
+
+    // Intro timings
+    setTimeout(() => showNextSlide(), 500);
+    setTimeout(() => showNextSlide(), 6000);
   </script>
 </body>
 </html>
