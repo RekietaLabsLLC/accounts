@@ -5,8 +5,9 @@
   <title>MyLabs Signup</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body {
+    body, html {
       margin: 0;
+      height: 100%;
       background-color: #0b0b0b;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
         Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
@@ -17,7 +18,7 @@
     #container {
       position: relative;
       width: 100%;
-      height: 100vh;
+      height: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -31,9 +32,6 @@
       opacity: 0;
       transform: translateX(100%);
       transition: transform 0.6s ease, opacity 0.6s ease;
-      padding: 20px;
-      background: rgba(23, 83, 170, 0.1);
-      border-radius: 8px;
     }
 
     .slide.active {
@@ -102,9 +100,7 @@
   </style>
 </head>
 <body>
-  <div id="container">
-    <!-- Slides will be injected here -->
-  </div>
+  <div id="container"></div>
 
   <script>
     const container = document.getElementById('container');
@@ -113,11 +109,13 @@
     const slides = [
       {
         id: 'intro1',
-        html: `<h1>Are you ready to level up your RekietaLabs Experience with MyLabs?</h1>`
+        html: `<h1>Are you ready to level up your RekietaLabs Experience with MyLabs?</h1>`,
+        autoAdvance: 5000
       },
       {
         id: 'intro2',
-        html: `<h2>Well then, let’s get started!</h2>`
+        html: `<h2>Well then, let’s get started!</h2>`,
+        autoAdvance: 5000
       },
       {
         id: 'firstName',
@@ -186,10 +184,12 @@
 
     function showNextSlide() {
       if (currentSlide >= 0) {
-        const old = document.getElementById(slides[currentSlide].id);
-        old.classList.remove('active');
-        old.classList.add('exit-left');
-        setTimeout(() => old.remove(), 600);
+        const oldSlide = document.getElementById(slides[currentSlide].id);
+        if (oldSlide) {
+          oldSlide.classList.remove('active');
+          oldSlide.classList.add('exit-left');
+          setTimeout(() => oldSlide.remove(), 600);
+        }
       }
 
       currentSlide++;
@@ -199,6 +199,10 @@
         newSlide.classList.add('slide', 'active');
         newSlide.innerHTML = slides[currentSlide].html;
         container.appendChild(newSlide);
+
+        if (slides[currentSlide].autoAdvance) {
+          setTimeout(() => showNextSlide(), slides[currentSlide].autoAdvance);
+        }
 
         if (slides[currentSlide].id === 'loading') {
           startLoading();
@@ -262,9 +266,22 @@
       }, 5000);
     }
 
-    // Intro timings
-    setTimeout(() => showNextSlide(), 500);
-    setTimeout(() => showNextSlide(), 6000);
+    function startRedirectCountdown() {
+      let seconds = 5;
+      const span = document.getElementById('countdown');
+      const interval = setInterval(() => {
+        seconds--;
+        span.innerText = seconds;
+        if (seconds <= 0) {
+          clearInterval(interval);
+          window.location.href = "https://accounts.rekietalabs.com/mylabs/login";
+        }
+      }, 1000);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      showNextSlide();
+    });
   </script>
 </body>
 </html>
