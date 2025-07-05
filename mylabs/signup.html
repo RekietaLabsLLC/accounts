@@ -11,263 +11,231 @@
       padding: 0;
     }
 
-    body {
+    body, html {
+      height: 100%;
       background-color: #0d0d0d;
-      color: #1753aa;
       font-family: 'Segoe UI', sans-serif;
-      overflow-x: hidden;
+      color: #1753aa;
+      overflow: hidden;
     }
 
-    .center {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      text-align: center;
-      flex-direction: column;
+    .screen {
+      position: absolute;
+      top: 0;
+      left: 100%;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      transition: all 0.6s ease;
       padding: 20px;
+      text-align: center;
+    }
+
+    .screen.active {
+      left: 0;
+    }
+
+    h1, h2 {
+      margin-bottom: 20px;
+    }
+
+    input {
+      background: #111;
+      border: 1px solid #1753aa;
+      border-radius: 5px;
+      padding: 12px;
+      color: #1753aa;
+      width: 100%;
+      max-width: 300px;
+      font-size: 1rem;
     }
 
     .btn {
       background-color: #1753aa;
-      color: white;
+      color: #fff;
       border: none;
       padding: 12px 24px;
-      font-size: 1rem;
       border-radius: 5px;
       cursor: pointer;
-      margin: 10px;
-      transition: background-color 0.3s;
+      margin-top: 20px;
+      font-size: 1rem;
     }
 
     .btn:hover {
       background-color: #14478c;
     }
 
-    .divider {
-      color: #1753aa;
-      margin: 20px 0;
-      font-size: 1rem;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .slide {
-      position: absolute;
-      left: 100vw;
-      opacity: 0;
-      transition: all 0.8s ease;
-      width: 100%;
-      max-width: 400px;
-      margin: auto;
-    }
-
-    .slide.active {
-      left: 0;
-      opacity: 1;
-    }
-
-    input {
-      padding: 10px;
-      font-size: 1rem;
-      border: 1px solid #1753aa;
-      border-radius: 5px;
-      background: #111;
-      color: #1753aa;
-      width: 100%;
-      margin-top: 15px;
-    }
-
     .error-msg {
-      font-size: 0.9rem;
       color: #d32f2f;
-      margin-top: 6px;
-      text-align: left;
+      margin-top: 8px;
+      font-size: 0.9rem;
     }
 
     .tip {
-      margin-top: 30px;
-      font-size: 1rem;
-      color: #ccc;
-      animation: fade 1s ease-in-out infinite alternate;
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: #aaa;
+      animation: fade 1s infinite alternate;
     }
 
     @keyframes fade {
-      0% { opacity: 0.5; }
-      100% { opacity: 1; }
+      from { opacity: 0.5; }
+      to { opacity: 1; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Initial choice screen -->
-  <div class="center" id="choiceScreen">
-    <h1>Welcome to MyLabs by RekietaLabs</h1>
-    <button class="btn" id="emailSignupBtn">Sign up with Email</button>
-    <div class="divider">— or —</div>
-    <p>Use a provider (coming soon)</p>
+  <!-- Choice Screen -->
+  <div class="screen active" id="choiceScreen">
+    <div>
+      <h1>Welcome to MyLabs by RekietaLabs</h1>
+      <button class="btn" id="emailSignupBtn">Sign up with Email</button>
+      <div style="margin: 20px 0;">— or —</div>
+      <p>Use a provider (coming soon)</p>
+    </div>
   </div>
 
-  <!-- Intro slides -->
-  <div class="center hidden" id="introScreen">
+  <!-- Intro Slides -->
+  <div class="screen" id="introScreen">
     <h1 id="introText"></h1>
   </div>
 
-  <!-- Signup question slides -->
-  <div class="center hidden" id="questionContainer">
-    <div class="slide" id="slide-first_name">
-      <h2>What’s your first name?</h2>
-      <input type="text" id="first_nameInput" placeholder="First Name" />
-    </div>
-
-    <div class="slide" id="slide-last_name">
-      <h2>What’s your last name?</h2>
-      <input type="text" id="last_nameInput" placeholder="Last Name" />
-    </div>
-
-    <div class="slide" id="slide-email">
-      <h2>What’s your email?</h2>
-      <input type="email" id="emailInput" placeholder="Email Address" />
-    </div>
-
-    <div class="slide" id="slide-password">
-      <h2>Create a password</h2>
-      <input type="password" id="passwordInput" placeholder="Password" />
-    </div>
-
-    <button class="btn hidden" id="nextBtn">Next</button>
+  <!-- Signup Questions -->
+  <div class="screen" id="signupScreen">
+    <h2 id="questionTitle"></h2>
+    <input id="questionInput" type="text" />
+    <div class="error-msg" id="errorMsg"></div>
+    <button class="btn" id="nextBtn">Next</button>
   </div>
 
-  <!-- Loading screen -->
-  <div class="center hidden" id="loadingScreen">
-    <img src="loading.gif" alt="Loading" width="60" style="margin-bottom: 20px;">
-    <p id="tipText"></p>
+  <!-- Loading Screen -->
+  <div class="screen" id="loadingScreen">
+    <div>
+      <img src="loading.gif" width="60" style="margin-bottom: 20px;" />
+      <p id="tipText"></p>
+    </div>
   </div>
 
-  <!-- Confirmation screen -->
-  <div class="center hidden" id="confirmScreen">
-    <img src="yellow-checkmark.gif" alt="Email Sent" width="100" style="margin-bottom: 20px;">
-    <h1>Please confirm your email</h1>
-    <p id="confirmEmail"></p>
+  <!-- Confirmation Screen -->
+  <div class="screen" id="confirmScreen">
+    <div>
+      <img src="yellow-checkmark.gif" width="80" style="margin-bottom: 20px;" />
+      <h1>That's it!</h1>
+      <p id="confirmMessage"></p>
+    </div>
   </div>
 
   <script>
-    let userData = {};
+    const slides = [
+      { field: 'first_name', question: "What's your first name?", type: "text" },
+      { field: 'last_name', question: "What's your last name?", type: "text" },
+      { field: 'email', question: "What's your email?", type: "email" },
+      { field: 'password', question: "Create a password", type: "password" }
+    ];
+
     let currentStep = 0;
-    let slides = ['first_name', 'last_name', 'email', 'password'];
+    let userData = {};
 
     document.getElementById('emailSignupBtn').addEventListener('click', () => {
-      document.getElementById('choiceScreen').classList.add('hidden');
-      startIntro();
+      goToScreen('choiceScreen', 'introScreen');
+      runIntro();
     });
 
-    function startIntro() {
-      const introScreen = document.getElementById('introScreen');
-      introScreen.classList.remove('hidden');
-      const messages = [
+    function runIntro() {
+      const introMessages = [
         "Are you ready to level up your RekietaLabs Experience with MyLabs?",
-        "Well then, let’s get started!"
+        "Well then, let's get started!"
       ];
 
-      let i = 0;
+      let index = 0;
+      const introText = document.getElementById('introText');
 
-      function showNextIntro() {
-        if (i >= messages.length) {
-          introScreen.classList.add('hidden');
-          startSignup();
+      function showNext() {
+        if (index >= introMessages.length) {
+          goToScreen('introScreen', 'signupScreen');
+          loadQuestion();
           return;
         }
-
-        document.getElementById('introText').textContent = messages[i];
-        i++;
-        setTimeout(showNextIntro, 5000); // 5 seconds per intro message
+        introText.textContent = introMessages[index++];
+        setTimeout(showNext, 5000);
       }
 
-      showNextIntro();
+      showNext();
     }
 
-    function startSignup() {
-      document.getElementById('questionContainer').classList.remove('hidden');
-      showSlide(slides[currentStep]);
-    }
-
-    function showSlide(id) {
-      document.querySelectorAll('.slide').forEach(slide => {
-        slide.classList.remove('active');
-      });
-      document.getElementById(`slide-${id}`).classList.add('active');
-      document.getElementById('nextBtn').classList.remove('hidden');
+    function loadQuestion() {
+      const q = slides[currentStep];
+      document.getElementById('questionTitle').textContent = q.question;
+      const input = document.getElementById('questionInput');
+      input.type = q.type;
+      input.value = '';
+      document.getElementById('errorMsg').textContent = '';
     }
 
     document.getElementById('nextBtn').addEventListener('click', () => {
-      saveAnswer(slides[currentStep]);
-    });
-
-    function saveAnswer(field) {
-      const inputId = field + 'Input';
-      const value = document.getElementById(inputId)?.value?.trim();
-      const input = document.getElementById(inputId);
-
-      let errorBox = input.nextElementSibling;
-      if (!errorBox || !errorBox.classList.contains('error-msg')) {
-        errorBox = document.createElement('div');
-        errorBox.className = 'error-msg';
-        input.insertAdjacentElement('afterend', errorBox);
-      }
+      const q = slides[currentStep];
+      const value = document.getElementById('questionInput').value.trim();
 
       if (!value) {
-        errorBox.innerText = "This field is required.";
+        document.getElementById('errorMsg').textContent = "This field is required.";
         return;
       } else {
-        errorBox.innerText = "";
-        userData[field] = value;
+        document.getElementById('errorMsg').textContent = "";
       }
+
+      userData[q.field] = value;
 
       currentStep++;
       if (currentStep < slides.length) {
-        showSlide(slides[currentStep]);
+        loadQuestion();
       } else {
         submitSignup();
       }
-    }
+    });
 
     function submitSignup() {
-      document.getElementById('questionContainer').classList.add('hidden');
-      document.getElementById('loadingScreen').classList.remove('hidden');
+      goToScreen('signupScreen', 'loadingScreen');
+      document.getElementById('tipText').textContent = "Tip: Did you know you can publish your own models on our community Marketplace?";
 
-      const tips = [
-        "Tip: Did you know you can publish your own models on our community Marketplace?",
-        "Tip: You can customize your MyLabs Account any way you like!"
-      ];
-
-      let tipIndex = 0;
-      document.getElementById('tipText').innerText = tips[tipIndex];
-
-      const interval = setInterval(() => {
-        tipIndex = (tipIndex + 1) % tips.length;
-        document.getElementById('tipText').innerText = tips[tipIndex];
-      }, 4000);
-
-      fetch("https://api.rekietalabs.com/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+      fetch('https://api.rekietalabs.com/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData)
       })
-      .then(response => response.json())
-      .then(result => {
-        clearInterval(interval);
-        document.getElementById('loadingScreen').classList.add('hidden');
-        document.getElementById('confirmScreen').classList.remove('hidden');
-        document.getElementById('confirmEmail').innerText = `Please check your email (${userData.email}) to confirm your account.`;
+      .then(async (res) => {
+        const result = await res.json();
+        if (res.ok) {
+          goToScreen('loadingScreen', 'confirmScreen');
+          document.getElementById('confirmMessage').textContent =
+            `Your account for ${userData.email} has been created! Please check your email to confirm. Redirecting to login in 5 seconds...`;
+          setTimeout(() => {
+            window.location.href = 'https://accounts.rekietalabs.com/mylabs/login';
+          }, 5000);
+        } else {
+          if (res.status === 409) {
+            showError(result.error);
+          } else {
+            showError("Something went wrong: " + result.error);
+          }
+        }
       })
-      .catch(error => {
-        clearInterval(interval);
-        alert("Signup failed: " + error.message);
+      .catch(err => {
+        showError("Network error: " + err.message);
       });
+    }
+
+    function showError(message) {
+      goToScreen('loadingScreen', 'signupScreen');
+      document.getElementById('errorMsg').textContent = message;
+      currentStep = 2; // jump to email slide
+      loadQuestion();
+    }
+
+    function goToScreen(fromId, toId) {
+      document.getElementById(fromId).classList.remove('active');
+      document.getElementById(toId).classList.add('active');
     }
   </script>
 </body>
