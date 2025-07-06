@@ -34,8 +34,8 @@
       transform: translateY(0);
     }
     .button {
-      display: inline-block;
-      margin: 1rem 0;
+      display: block;
+      margin: 1rem auto;
       padding: 0.75rem 1.5rem;
       font-size: 1rem;
       background-color: #1753aa;
@@ -44,9 +44,16 @@
       border-radius: 5px;
       cursor: pointer;
       transition: background 0.3s;
+      width: 100%;
+      max-width: 300px;
     }
     .button:hover {
       background-color: #144a99;
+    }
+    .or-divider {
+      color: #666;
+      margin: 20px 0;
+      font-size: 0.9rem;
     }
     .question {
       display: none;
@@ -107,7 +114,7 @@
 
     <div id="methodSelection" style="display:none;">
       <button class="button" id="emailButton">Sign up with Email</button>
-      <div style="margin:1rem 0; color:#555;">OR</div>
+      <div class="or-divider">OR</div>
       <button class="button github-button" id="githubButton">
         <img src="/mylabs/github-mark.png" alt="GitHub Logo"/> Sign up with GitHub
       </button>
@@ -217,7 +224,12 @@
         const res = await fetch("https://api.rekietalabs.com/signup", {
           method: "POST",
           headers: {"Content-Type":"application/json"},
-          body: JSON.stringify({first_name:firstName,last_name,lastName,email,password})
+          body: JSON.stringify({
+            first_name: firstName,
+            last_name: lastName,
+            email,
+            password
+          })
         });
         if (!res.ok) {
           const data = await res.json();
