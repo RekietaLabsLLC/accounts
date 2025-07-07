@@ -3,227 +3,398 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sign Up - RekietaLabs MyLabs</title>
+  <title>MyLabs Signup</title>
   <style>
     body {
       margin: 0;
-      background-color: #0f0f0f;
+      background-color: #0c0c0c;
       color: #1753aa;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      overflow-x: hidden;
     }
+
     .container {
-      text-align: center;
-      max-width: 400px;
-      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
       padding: 20px;
+      text-align: center;
     }
+
     h1 {
-      font-size: 1.8rem;
-      margin: 1rem 0;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: all 0.8s ease;
+      font-size: 2.2rem;
+      margin-bottom: 20px;
     }
-    h1.active {
-      opacity: 1;
-      transform: translateY(0);
+
+    p {
+      font-size: 1.2rem;
+      color: #aaa;
     }
+
     .button {
-      display: block;
-      margin: 1rem auto;
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
       background-color: #1753aa;
       color: white;
       border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.3s;
-      width: 100%;
-      max-width: 300px;
-    }
-    .button:hover {
-      background-color: #144a99;
-    }
-    .or-divider {
-      color: #666;
-      margin: 20px 0;
-      font-size: 0.9rem;
-    }
-    .question {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      animation: slideIn 0.5s forwards;
-    }
-    .question.active {
-      display: flex;
-    }
-    input {
-      margin-top: 1rem;
-      padding: 0.75rem;
+      padding: 12px 20px;
       font-size: 1rem;
+      cursor: pointer;
+      margin-top: 20px;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+
+    .button:hover {
+      background-color: #0d3d7a;
+    }
+
+    .slide {
+      display: none;
+      max-width: 400px;
       width: 100%;
-      border: 1px solid #1753aa;
-      border-radius: 5px;
-      background: #222;
-      color: #eee;
     }
-    .error {
-      color: #e74c3c;
-      font-size: 0.9rem;
-      margin-top: 0.5rem;
+
+    .visible {
+      display: block;
+      animation: slideIn 0.8s forwards;
     }
-    .tip {
-      font-size: 0.9rem;
-      color: #aaa;
-      margin-top: 1rem;
-    }
-    .github-button {
-      background: #333;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .github-button img {
-      height: 20px;
-      margin-right: 0.5rem;
-    }
+
     @keyframes slideIn {
-      from {
+      0% {
+        transform: translateX(100%);
         opacity: 0;
-        transform: translateX(50px);
       }
-      to {
+      100% {
+        transform: translateX(0%);
         opacity: 1;
-        transform: translateX(0);
       }
+    }
+
+    @keyframes slideOut {
+      0% {
+        transform: translateX(0%);
+        opacity: 1;
+      }
+      100% {
+        transform: translateX(-100%);
+        opacity: 0;
+      }
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border: 1px solid #333;
+      border-radius: 4px;
+      background-color: #1b1b1b;
+      color: #fff;
+      font-size: 1rem;
+    }
+
+    .error {
+      color: #d32f2f;
+      font-size: 0.9rem;
+      margin-top: 5px;
+    }
+
+    .confirm-field {
+      margin-bottom: 15px;
+      text-align: left;
+    }
+
+    .confirm-field label {
+      display: block;
+      margin-bottom: 5px;
+      color: #ccc;
+    }
+
+    .small-note {
+      font-size: 0.9rem;
+      color: #777;
+      margin-top: 10px;
+    }
+
+    .divider {
+      margin: 30px 0;
+      text-align: center;
+      color: #555;
+      position: relative;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+      position: absolute;
+      height: 1px;
+      width: 40%;
+      background: #333;
+      top: 50%;
+    }
+
+    .divider::before {
+      left: 0;
+    }
+    .divider::after {
+      right: 0;
+    }
+
+    .provider-btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #333;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+
+    .provider-btn img {
+      height: 24px;
+      margin-right: 10px;
+    }
+
+    .provider-btn:hover {
+      background-color: #444;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1 id="intro1">Are you ready to level up your RekietaLabs experience?</h1>
-    <h1 id="intro2">Well then, let’s get started!</h1>
 
-    <div id="methodSelection" style="display:none;">
-      <button class="button" id="emailButton">Sign up with Email</button>
-      <div class="or-divider">OR</div>
-      <button class="button github-button" id="githubButton">
-        <img src="/mylabs/github-mark.png" alt="GitHub Logo"/> Sign up with GitHub
-      </button>
+    <!-- Intro slides -->
+    <div id="intro1" class="slide visible">
+      <h1>Are you ready to level up your RekietaLabs Experience with MyLabs?</h1>
     </div>
 
-    <!-- Questions -->
-    <div id="questions" style="display:none;">
-      <div class="question" id="q1">
-        <label>What's your first name?</label>
-        <input type="text" id="firstName"/>
-        <div class="error" id="error1"></div>
-        <button class="button next">Next</button>
-      </div>
-      <div class="question" id="q2">
-        <label>What's your last name?</label>
-        <input type="text" id="lastName"/>
-        <div class="error" id="error2"></div>
-        <button class="button next">Next</button>
-      </div>
-      <div class="question" id="q3">
-        <label>What's your email?</label>
-        <input type="email" id="email"/>
-        <div class="error" id="error3"></div>
-        <button class="button next">Next</button>
-      </div>
-      <div class="question" id="q4">
-        <label>Create a password</label>
-        <input type="password" id="password"/>
-        <div class="error" id="error4"></div>
-        <button class="button" id="submit">Sign Up</button>
-      </div>
+    <div id="intro2" class="slide">
+      <h1>Well then, let's get started!</h1>
     </div>
 
-    <!-- Success Message -->
-    <div id="successMessage" style="display:none;">
-      <h1>Thank you for signing up!</h1>
-      <p>Please check your email to verify your account.</p>
-      <p class="tip">This page will redirect in 10 seconds...</p>
+    <!-- Choice screen -->
+    <div id="choiceScreen" class="slide">
+      <h1>How would you like to sign up?</h1>
+      <button class="button" id="emailSignupBtn">Sign Up with Email</button>
+
+      <div class="divider">OR</div>
+
+      <a class="provider-btn" href="https://rwwrrrutvvsbanbzzwbq.supabase.co/auth/v1/authorize?provider=github&redirect_to=https://accounts.rekietalabs.com/mylabs/login">
+        <img src="/mylabs/github-mark.png" alt="GitHub Logo" />
+        Sign Up with GitHub
+      </a>
     </div>
+
+    <!-- Signup flow -->
+    <div id="question1" class="slide">
+      <h1>What's your First Name?</h1>
+      <input type="text" id="firstName" />
+      <div class="error" id="errorFirst"></div>
+      <button class="button" id="next1">Next</button>
+    </div>
+
+    <div id="question2" class="slide">
+      <h1>What's your Last Name?</h1>
+      <input type="text" id="lastName" />
+      <div class="error" id="errorLast"></div>
+      <button class="button" id="next2">Next</button>
+    </div>
+
+    <div id="question3" class="slide">
+      <h1>What's your Email Address?</h1>
+      <input type="email" id="email" />
+      <div class="error" id="errorEmail"></div>
+      <button class="button" id="next3">Next</button>
+    </div>
+
+    <div id="question4" class="slide">
+      <h1>Create a Password</h1>
+      <input type="password" id="password" />
+      <div class="error" id="errorPwd"></div>
+      <button class="button" id="finishBtn">Finish</button>
+    </div>
+
+    <!-- Confirmation page -->
+    <div id="confirmPage" class="slide">
+      <h1>Confirm Your Details</h1>
+
+      <div class="confirm-field">
+        <label for="confFirst">First Name:</label>
+        <input type="text" id="confFirst" />
+        <div class="error" id="errorConfFirst"></div>
+      </div>
+
+      <div class="confirm-field">
+        <label for="confLast">Last Name:</label>
+        <input type="text" id="confLast" />
+        <div class="error" id="errorConfLast"></div>
+      </div>
+
+      <div class="confirm-field">
+        <label for="confEmail">Email Address:</label>
+        <input type="email" id="confEmail" />
+        <div class="error" id="errorConfEmail"></div>
+      </div>
+
+      <div class="confirm-field">
+        <label for="confPassword">Change Password (optional):</label>
+        <input type="password" id="confPassword" placeholder="Leave blank to keep same password" />
+        <div class="error" id="errorConfPwd"></div>
+      </div>
+
+      <button class="button" id="confirmBtn">Confirm & Create Account</button>
+    </div>
+
+    <!-- Email Check Screen -->
+    <div id="successMessage" class="slide">
+      <h1>Thank You for Signing Up!</h1>
+      <p id="successText"></p>
+      <p class="small-note">
+        For your security, you’ll need to confirm your email address before you can log in.<br>
+        This page will automatically redirect to the login page in 10 seconds.
+      </p>
+    </div>
+
   </div>
 
   <script>
-    const intro1 = document.getElementById("intro1");
-    const intro2 = document.getElementById("intro2");
-    const methodSelection = document.getElementById("methodSelection");
-    const githubButton = document.getElementById("githubButton");
-    const emailButton = document.getElementById("emailButton");
-    const questions = document.getElementById("questions");
-    const qList = [...document.querySelectorAll(".question")];
-    const submitBtn = document.getElementById("submit");
-    const successMessage = document.getElementById("successMessage");
+    const slides = [
+      "intro1",
+      "intro2",
+      "choiceScreen",
+      "question1",
+      "question2",
+      "question3",
+      "question4",
+      "confirmPage",
+      "successMessage"
+    ];
 
-    // Intro animation
-    setTimeout(() => intro1.classList.add("active"), 500);
-    setTimeout(() => intro1.classList.remove("active"), 4500);
-    setTimeout(() => intro2.classList.add("active"), 5000);
-    setTimeout(() => intro2.classList.remove("active"), 9000);
-    setTimeout(() => {
-      methodSelection.style.display = "block";
-    }, 9500);
+    let currentSlide = 0;
 
-    emailButton.addEventListener("click", () => {
-      methodSelection.style.display = "none";
-      questions.style.display = "block";
-      showQuestion(0);
-    });
+    function showSlide(id) {
+      slides.forEach(s => {
+        const el = document.getElementById(s);
+        if (el) {
+          el.style.display = "none";
+        }
+      });
 
-    githubButton.addEventListener("click", () => {
-      window.location.href = "https://rwwrrrutvvsbanbzzwbq.supabase.co/auth/v1/authorize?provider=github&redirect_to=https://accounts.rekietalabs.com/mylabs/login";
-    });
-
-    let current = 0;
-    function showQuestion(index) {
-      qList.forEach(q => q.classList.remove("active"));
-      qList[index].classList.add("active");
-      current = index;
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.remove("visible");
+        el.style.display = "block";
+        void el.offsetWidth; // trigger reflow
+        el.classList.add("visible");
+      }
     }
 
-    qList.forEach((q, i) => {
-      const nextBtn = q.querySelector(".next");
-      if (nextBtn) {
-        nextBtn.addEventListener("click", () => {
-          const input = q.querySelector("input");
-          if (!input.value.trim()) {
-            q.querySelector(".error").innerText = "Please provide a value.";
-            return;
-          }
-          q.querySelector(".error").innerText = "";
-          showQuestion(i + 1);
-        });
+    function nextSlide() {
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        showSlide(slides[currentSlide]);
       }
+    }
+
+    setTimeout(() => {
+      nextSlide();
+    }, 5000);
+
+    setTimeout(() => {
+      nextSlide();
+    }, 11000);
+
+    document.getElementById("emailSignupBtn").addEventListener("click", () => {
+      nextSlide();
     });
 
-    submitBtn.addEventListener("click", async () => {
-      const firstName = document.getElementById("firstName").value.trim();
-      const lastName = document.getElementById("lastName").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
-
-      if (!firstName || !lastName || !email || !password) {
-        document.getElementById("error4").innerText = "All fields are required.";
+    document.getElementById("next1").addEventListener("click", () => {
+      const val = document.getElementById("firstName").value.trim();
+      if (!val) {
+        document.getElementById("errorFirst").innerText = "Please enter your first name.";
         return;
       }
-      document.getElementById("error4").innerText = "";
+      document.getElementById("errorFirst").innerText = "";
+      nextSlide();
+    });
+
+    document.getElementById("next2").addEventListener("click", () => {
+      const val = document.getElementById("lastName").value.trim();
+      if (!val) {
+        document.getElementById("errorLast").innerText = "Please enter your last name.";
+        return;
+      }
+      document.getElementById("errorLast").innerText = "";
+      nextSlide();
+    });
+
+    document.getElementById("next3").addEventListener("click", () => {
+      const val = document.getElementById("email").value.trim();
+      if (!val) {
+        document.getElementById("errorEmail").innerText = "Please enter your email.";
+        return;
+      }
+      document.getElementById("errorEmail").innerText = "";
+      nextSlide();
+    });
+
+    document.getElementById("finishBtn").addEventListener("click", () => {
+      const val = document.getElementById("password").value.trim();
+      if (!val) {
+        document.getElementById("errorPwd").innerText = "Please enter a password.";
+        return;
+      }
+      document.getElementById("errorPwd").innerText = "";
+
+      // prefill confirm screen
+      document.getElementById("confFirst").value = document.getElementById("firstName").value;
+      document.getElementById("confLast").value = document.getElementById("lastName").value;
+      document.getElementById("confEmail").value = document.getElementById("email").value;
+
+      nextSlide();
+    });
+
+    document.getElementById("confirmBtn").addEventListener("click", async () => {
+      const firstName = document.getElementById("confFirst").value.trim();
+      const lastName = document.getElementById("confLast").value.trim();
+      const email = document.getElementById("confEmail").value.trim();
+      let password = document.getElementById("confPassword").value.trim();
+
+      let hasError = false;
+
+      if (!firstName) {
+        document.getElementById("errorConfFirst").innerText = "First name is required.";
+        hasError = true;
+      } else {
+        document.getElementById("errorConfFirst").innerText = "";
+      }
+
+      if (!lastName) {
+        document.getElementById("errorConfLast").innerText = "Last name is required.";
+        hasError = true;
+      } else {
+        document.getElementById("errorConfLast").innerText = "";
+      }
+
+      if (!email) {
+        document.getElementById("errorConfEmail").innerText = "Email is required.";
+        hasError = true;
+      } else {
+        document.getElementById("errorConfEmail").innerText = "";
+      }
+
+      if (hasError) return;
+
+      if (!password) {
+        password = document.getElementById("password").value;
+      }
 
       try {
         const res = await fetch("https://api.rekietalabs.com/signup", {
           method: "POST",
-          headers: {"Content-Type":"application/json"},
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             first_name: firstName,
             last_name: lastName,
@@ -231,17 +402,23 @@
             password
           })
         });
+
         if (!res.ok) {
           const data = await res.json();
           throw new Error(data.error || "Signup failed");
         }
-        questions.style.display = "none";
-        successMessage.style.display = "block";
+
+        document.getElementById("successText").innerText =
+          `A confirmation link has been sent to ${email}. Please check your inbox and follow the instructions to activate your account.`;
+
+        nextSlide();
+
         setTimeout(() => {
           window.location.href = "https://accounts.rekietalabs.com/mylabs/login";
-        },10000);
-      } catch(err) {
-        alert("Signup error: "+err.message);
+        }, 10000);
+
+      } catch (err) {
+        alert("Signup failed: " + err.message);
       }
     });
   </script>
