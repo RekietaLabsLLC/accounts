@@ -2,203 +2,152 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MyLabs Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login</title>
   <style>
     body {
       margin: 0;
-      background-color: #0c0c0c;
-      color: #1753aa;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      font-family: Arial, sans-serif;
+      background-color: #0a0a0a;
+      color: #ffffff;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      padding: 20px;
     }
 
-    .login-container {
+    .container {
+      background-color: #111;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
       width: 100%;
       max-width: 400px;
-      background: #1b1b1b;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px #000;
       text-align: center;
     }
 
     h1 {
-      margin-bottom: 20px;
-      font-size: 2rem;
+      color: #1753aa;
+      margin-bottom: 1.5rem;
     }
 
-    input {
+    input[type="email"],
+    input[type="password"] {
       width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      margin-bottom: 15px;
-      border: 1px solid #333;
-      border-radius: 4px;
-      background-color: #0c0c0c;
-      color: #fff;
+      padding: 10px;
+      margin-bottom: 1rem;
+      border: none;
+      border-radius: 6px;
+      background-color: #222;
+      color: white;
       font-size: 1rem;
     }
 
     button {
       width: 100%;
+      padding: 10px;
       background-color: #1753aa;
-      color: white;
       border: none;
-      padding: 12px;
+      border-radius: 6px;
+      color: white;
       font-size: 1rem;
       cursor: pointer;
-      border-radius: 4px;
-      margin-top: 10px;
-      transition: background-color 0.3s;
-    }
-
-    button:hover {
-      background-color: #0d3d7a;
     }
 
     .divider {
-      color: #777;
-      margin: 25px 0;
-      position: relative;
-      text-align: center;
+      margin: 1.5rem 0;
+      color: #aaa;
+      font-size: 0.9rem;
     }
 
-    .divider::before,
-    .divider::after {
-      content: "";
-      position: absolute;
-      height: 1px;
-      width: 40%;
-      background: #333;
-      top: 50%;
-    }
-
-    .divider::before {
-      left: 0;
-    }
-    .divider::after {
-      right: 0;
-    }
-
-    .github-btn {
+    .github-button {
       display: flex;
       align-items: center;
       justify-content: center;
+      gap: 10px;
       background-color: #333;
-      color: #fff;
+      padding: 10px;
+      border-radius: 6px;
       text-decoration: none;
-      padding: 10px 15px;
-      border-radius: 4px;
-      font-size: 1rem;
-      transition: background-color 0.3s;
+      color: white;
     }
 
-    .github-btn:hover {
-      background-color: #444;
-    }
-
-    .github-btn img {
+    .github-button img {
       height: 24px;
-      margin-right: 10px;
+      width: 24px;
       border-radius: 50%;
     }
   </style>
 </head>
 <body>
-  <div class="login-container">
+  <div class="container">
     <h1>Login</h1>
+    <form id="login-form">
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <button type="submit">Login</button>
+    </form>
 
-    <input type="email" id="email" placeholder="Email" />
-    <input type="password" id="password" placeholder="Password" />
+    <div class="divider">or</div>
 
-    <button id="loginBtn">Login</button>
-
-    <div class="divider">OR</div>
-
-    <a id="githubBtn" class="github-btn" href="#">
-      <img src="/mylabs/github-mark.png" alt="GitHub" id="githubLogo" />
-      <span id="githubText">Login with GitHub</span>
+    <a id="github-btn" class="github-button" href="#">
+      <img id="github-logo" src="/mylabs/github-mark.png" alt="GitHub Logo" />
+      <span id="github-text">Login with GitHub</span>
     </a>
   </div>
 
   <script type="module">
-    import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.5";
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-    const supabase = createClient(
-      "https://rwwrrrutvvsbanbzzwbq.supabase.co",
-      "" // No anon key needed for reading public info
-    );
+    const supabaseUrl = 'https://rwwrrrutvvsbanbzzwbq.supabase.co';
+    const supabaseKey = '<your-anon-key-here>'; // Replace this with your real anon key
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Check for OAuth token in URL hash
-    const hash = window.location.hash;
-    const githubBtn = document.getElementById("githubBtn");
-    const githubLogo = document.getElementById("githubLogo");
-    const githubText = document.getElementById("githubText");
+    const githubBtn = document.getElementById('github-btn');
+    const githubLogo = document.getElementById('github-logo');
+    const githubText = document.getElementById('github-text');
 
-    if (hash && hash.includes("access_token")) {
-      const params = new URLSearchParams(hash.substring(1));
-      const accessToken = params.get("access_token");
+    document.getElementById("login-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
 
-      if (accessToken) {
-        supabase.auth.setSession({
-          access_token: accessToken,
-          refresh_token: params.get("refresh_token"),
-        });
-
-        supabase.auth.getUser().then(({ data, error }) => {
-          if (data?.user) {
-            const name = data.user.user_metadata?.full_name || data.user.email;
-            const avatar = data.user.user_metadata?.avatar_url || "/mylabs/github-mark.png";
-
-            githubLogo.src = avatar;
-            githubText.textContent = `Continue as ${name}`;
-
-            githubBtn.href = "#";
-            githubBtn.addEventListener("click", () => {
-              // ✅ Redirect user somewhere, or save token
-              window.location.href = "/mylabs/dashboard.html";
-            });
-          }
-        });
-      }
-    } else {
-      githubBtn.href =
-        "https://rwwrrrutvvsbanbzzwbq.supabase.co/auth/v1/authorize?provider=github&redirect_to=https://accounts.rekietalabs.com/mylabs/login";
-    }
-
-    document.getElementById("loginBtn").addEventListener("click", async () => {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-
-      if (!email || !password) {
-        alert("Please enter both email and password.");
-        return;
-      }
-
-      try {
-        const res = await fetch("https://api.rekietalabs.com/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        });
-
-        if (!res.ok) {
-          const data = await res.json();
-          throw new Error(data.error || "Login failed.");
-        }
-
-        // ✅ Redirect to your dashboard or home page
-        window.location.href = "/mylabs/dashboard.html";
-      } catch (e) {
-        alert("Login failed: " + e.message);
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        alert(error.message);
+      } else {
+        window.location.href = "/mylabs/dashboard";
       }
     });
+
+    async function handleOAuthRedirect() {
+      const { data: { user }, error } = await supabase.auth.getUser();
+
+      if (user) {
+        const created = new Date(user.created_at);
+        const updated = new Date(user.updated_at);
+        const isNew = Math.abs(updated - created) < 5000;
+
+        if (isNew) {
+          githubLogo.src = user.user_metadata?.avatar_url || "/mylabs/github-mark.png";
+          githubText.textContent = `Continue as ${user.user_metadata?.full_name || user.email}`;
+          githubBtn.href = "#";
+          githubBtn.addEventListener("click", () => {
+            window.location.href = "/mylabs/dashboard";
+          });
+        } else {
+          window.location.href = "/mylabs/dashboard";
+        }
+      }
+    }
+
+    githubBtn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      const { data, error } = await supabase.auth.signInWithOAuth({ provider: "github" });
+      if (error) console.error(error);
+    });
+
+    handleOAuthRedirect();
   </script>
 </body>
 </html>
