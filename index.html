@@ -3,296 +3,212 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MyLabs Accounts - RekietaLabs</title>
+  <title>MyLabs Accounts by RekietaLabs</title>
   <style>
     :root {
-      --brand: #1753aa;
-      --text: #ffffff;
-      --bg: #0d0d0d;
-      --gray: #bbbbbb;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+      --brand-color: #1753aa;
+      --login-color: #444fd9;
+      --bg-dark: #0b0b0e;
+      --section-bg: #1e2a4b;
+      --text-light: #ffffff;
+      --text-muted: #b0b0b0;
+      --section-border: #2c4a7a;
     }
 
     body {
+      margin: 0;
+      background-color: var(--bg-dark);
+      color: var(--text-light);
       font-family: 'Segoe UI', sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      overflow-x: hidden;
+      scroll-behavior: smooth;
     }
 
     header {
       position: fixed;
-      top: -80px;
+      top: -100px;
       left: 0;
       width: 100%;
-      background: rgba(13, 13, 13, 0.95);
-      backdrop-filter: blur(6px);
-      padding: 1rem 2rem;
+      background-color: rgba(15, 15, 20, 0.95);
       display: flex;
       justify-content: center;
-      gap: 1.5rem;
+      gap: 1rem;
+      padding: 1rem 0;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
       z-index: 999;
-      transition: top 0.4s ease;
-    }
-
-    header.show {
-      top: 0;
+      transition: top 0.3s ease;
     }
 
     header a {
-      text-decoration: none;
-      padding: 0.6rem 1rem;
+      padding: 0.6rem 1.2rem;
       border-radius: 8px;
-      font-weight: 600;
+      text-decoration: none;
+      font-weight: bold;
       transition: background 0.3s;
     }
 
-    .btn-home {
-      background: none;
-      color: var(--gray);
-    }
+    header .home { background: transparent; color: var(--text-light); }
+    header .marketplace { background: transparent; color: var(--text-light); }
+    header .login { background: var(--login-color); color: white; }
+    header .signup { background: var(--brand-color); color: white; }
 
-    .btn-market {
-      background: none;
-      color: var(--gray);
-    }
-
-    .btn-login {
-      background: #333;
-      color: var(--text);
-    }
-
-    .btn-signup {
-      background: var(--brand);
-      color: white;
+    header a:hover {
+      background-color: rgba(255,255,255,0.1);
     }
 
     section {
-      padding: 5rem 2rem;
-      max-width: 1000px;
-      margin: auto;
+      background-color: var(--section-bg);
+      border: 2px solid var(--section-border);
+      border-radius: 16px;
+      padding: 5rem 1rem;
       text-align: center;
+      max-width: 960px;
+      margin: 3rem auto;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
 
-    h1, h2 {
-      font-weight: 700;
-      margin-bottom: 1rem;
+    section.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
 
-    p {
-      color: #cccccc;
+    .hero h1 {
+      font-size: 2.8rem;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      margin-top: 1rem;
     }
 
     .counter {
       font-size: 2rem;
+      margin: 1.5rem 0;
+      color: var(--brand-color);
       font-weight: bold;
-      margin-top: 1rem;
-      color: var(--brand);
     }
 
-    .cta-button {
-      background: var(--brand);
+    .btn {
+      display: inline-block;
+      background-color: var(--brand-color);
       color: white;
-      border: none;
-      padding: 0.75rem 2rem;
-      font-size: 1rem;
-      margin-top: 1.5rem;
+      padding: 0.8rem 1.5rem;
+      margin-top: 1rem;
       border-radius: 10px;
-      cursor: pointer;
-      transition: transform 0.2s;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: transform 0.3s;
     }
 
-    .cta-button:hover {
+    .btn:hover {
       transform: scale(1.05);
     }
 
-    .section-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 2rem;
-      margin-top: 2rem;
-    }
-
-    .card {
-      background: #111;
-      padding: 1.5rem;
-      border-radius: 12px;
-      border: 1px solid #222;
-      transition: transform 0.3s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-5px);
-    }
-
     footer {
-      padding: 2rem;
-      background: #111;
       text-align: center;
-      color: #777;
+      padding: 2rem 1rem;
+      color: var(--text-muted);
       font-size: 0.9rem;
-    }
-
-    .fade-in {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-    }
-
-    .fade-in.visible {
-      opacity: 1;
-      transform: none;
-    }
-
-    @media (max-width: 600px) {
-      header {
-        flex-direction: column;
-        align-items: center;
-        gap: 0.5rem;
-      }
-
-      .cta-button {
-        width: 100%;
-      }
     }
   </style>
 </head>
 <body>
-
-  <header id="mainHeader">
-    <a href="https://rekietalabs.com" class="btn-home">Home</a>
-    <a href="#marketplace" class="btn-market">Marketplace</a>
-    <a href="https://accounts.rekietalabs.com/login" class="btn-login">Login</a>
-    <a href="https://accounts.rekietalabs.com/mylabs/signup" class="btn-signup">Signup</a>
+  <header id="menu">
+    <a href="https://rekietalabs.com" class="home">Home</a>
+    <a href="#marketplace" class="marketplace">Marketplace</a>
+    <a href="#" class="login">Login</a>
+    <a href="https://accounts.rekietalabs.com/mylabs/signup" class="signup">Signup</a>
   </header>
 
-  <!-- Hero -->
-  <section class="fade-in">
+  <section class="hero">
     <h1>Welcome to MyLabs Accounts</h1>
     <p>Secure, integrated, and built for scale.</p>
-    <div id="userCounter" class="counter">Loading users...</div>
-    <a href="https://accounts.rekietalabs.com/mylabs/signup">
-      <button class="cta-button">Get Started</button>
-    </a>
+    <div class="counter" id="userCounter">0 active users</div>
+    <a href="https://accounts.rekietalabs.com/mylabs/signup" class="btn">Get Started</a>
   </section>
 
-  <!-- What is MyLabs -->
-  <section class="fade-in">
+  <section class="about">
     <h2>What is MyLabs?</h2>
-    <p>MyLabs is your single sign-in hub for all RekietaLabs tools, services, and APIs.</p>
-    <a href="https://accounts.rekietalabs.com/mylabs/signup">
-      <button class="cta-button">Create Your Free Account</button>
-    </a>
+    <p>MyLabs is your gateway to everything RekietaLabs. With one account, access all services, APIs, and tools across our ecosystem.</p>
+    <a class="btn" href="https://accounts.rekietalabs.com/mylabs/signup">Create Your Free Account</a>
   </section>
 
-  <!-- Integrations -->
-  <section class="fade-in">
-    <h2>Powerful Integrations</h2>
-    <p>Connect with services like Supabase, Replit, email webhooks, and more — no code or full control.</p>
-    <div class="section-grid">
-      <div class="card">Supabase</div>
-      <div class="card">Replit</div>
-      <div class="card">Email Hooks</div>
-      <div class="card">REST API</div>
-    </div>
+  <section>
+    <h2>What Can MyLabs Integrate With?</h2>
+    <p>MyLabs works with services like Replit and other tools to simplify authentication and automate your development process. More integrations coming soon.</p>
   </section>
 
-  <!-- Marketplace -->
-  <section class="fade-in" id="marketplace">
-    <h2>RekietaLabs Marketplace</h2>
-    <p>A community-driven hub for sharing and downloading models — 100% free and open.</p>
-    <a href="#">
-      <button class="cta-button">Visit Marketplace</button>
-    </a>
+  <section id="marketplace">
+    <h2>Explore the RekietaLabs Marketplace</h2>
+    <p>Discover community-published 3D models, scripts, and templates — all free to download and use. Empower your projects and share your creations.</p>
   </section>
 
-  <!-- API -->
-  <section class="fade-in">
-    <h2>RekietaLabs API</h2>
-    <p>Access your data, automate workflows, and integrate with any platform using secure API calls.</p>
-    <code style="background:#111; padding: 0.75rem 1rem; display: block; border-radius: 8px; margin-top: 1rem;">
-      curl https://api.rekietalabs.com/user/data
-    </code>
-    <a href="https://docs.rekietalabs.com">
-      <button class="cta-button" style="margin-top: 1.5rem;">API Docs</button>
-    </a>
+  <section>
+    <h2>Use the RekietaLabs API</h2>
+    <p>Connect to the MyLabs API directly from environments like Replit. Automate, sync, and manage users and services with powerful API calls.</p>
+    <a class="btn" href="https://docs.rekietalabs.com">View API Docs</a>
   </section>
 
-  <!-- Why MyLabs -->
-  <section class="fade-in">
-    <h2>Why Choose MyLabs?</h2>
-    <div class="section-grid">
-      <div class="card">🔐 Secure Authentication</div>
-      <div class="card">⚙️ Developer Ready</div>
-      <div class="card">🌐 Open Integration</div>
-      <div class="card">🧩 Trusted by RekietaLabs</div>
-    </div>
+  <section>
+    <h2>Why Choose MyLabs by RekietaLabs?</h2>
+    <p>We prioritize speed, simplicity, and serious service. MyLabs is designed to scale with you, offering clean integration and future-ready support.</p>
   </section>
 
-  <!-- About RekietaLabs -->
-  <section class="fade-in">
-    <h2>Built by RekietaLabs</h2>
-    <p>MyLabs is made by RekietaLabs — a trusted name in tools, automation, and user control.</p>
-    <a href="https://rekietalabs.com">
-      <button class="cta-button">Learn More</button>
-    </a>
+  <section>
+    <h2>Who Made MyLabs?</h2>
+    <p>MyLabs is built by <strong>RekietaLabs</strong> — a tech-focused company dedicated to innovation, transparency, and developer empowerment.</p>
+    <a class="btn" href="https://rekietalabs.com">Learn More About RekietaLabs</a>
   </section>
 
   <footer>
-    &copy; 2025 RekietaLabs. All rights reserved.
+    &copy; 2025 MyLabs by RekietaLabs. All rights reserved.
   </footer>
 
-  <!-- JS -->
   <script>
-    // Scroll Header
-    const header = document.getElementById('mainHeader');
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 100) {
-        header.classList.add('show');
+    const counter = document.getElementById('userCounter');
+    const startValue = 0;
+    const endValue = 12304;
+    const duration = 2000;
+    const steps = 50;
+    const increment = (endValue - startValue) / steps;
+    let current = startValue;
+    let stepTime = duration / steps;
+
+    function updateCounter() {
+      counter.textContent = Math.floor(current).toLocaleString() + " active users";
+      if (current < endValue) {
+        current += increment;
+        setTimeout(updateCounter, stepTime);
       } else {
-        header.classList.remove('show');
+        counter.textContent = endValue.toLocaleString() + " active users";
       }
-    });
+    }
 
-// Counter Logic
-const counter = document.getElementById('userCounter');
-const startValue = 0; // Start from 0
-const endValue = 12304; // Your target number
-const duration = 2000; // Total duration in milliseconds
-const steps = 50;
-const increment = (endValue - startValue) / steps;
-let current = startValue;
-let stepTime = duration / steps;
+    updateCounter();
 
-function updateCounter() {
-  counter.textContent = Math.floor(current).toLocaleString() + " active users";
-  if (current < endValue) {
-    current += increment;
-    setTimeout(updateCounter, stepTime);
-  } else {
-    counter.textContent = endValue.toLocaleString() + " active users";
-  }
-}
-
-updateCounter();
-
-    // Animate on Scroll
-    const fadeElements = document.querySelectorAll('.fade-in');
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
         }
       });
-    }, { threshold: 0.1 });
+    });
 
-    fadeElements.forEach(el => observer.observe(el));
+    document.querySelectorAll('section').forEach(section => {
+      observer.observe(section);
+    });
+
+    window.addEventListener('scroll', () => {
+      const header = document.getElementById('menu');
+      if (window.scrollY > 100) {
+        header.style.top = '0';
+      } else {
+        header.style.top = '-100px';
+      }
+    });
   </script>
 </body>
 </html>
