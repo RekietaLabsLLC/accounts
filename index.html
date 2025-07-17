@@ -2,148 +2,288 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MyLabs Accounts – Coming Soon!</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyLabs Accounts by RekietaLabs</title>
   <style>
-    html, body {
+    :root {
+      --main-bg: #0f0f1a;
+      --accent: #1753aa;
+      --light: #ffffff;
+      --dim: #c7c7d0;
+      --section-bg: #1a1a2a;
+      --font: 'Segoe UI', sans-serif;
+    }
+
+    * {
       margin: 0;
       padding: 0;
-      height: 100%;
-      overflow: hidden;
-      font-family: 'Segoe UI', sans-serif;
-      background: #0a0a0a;
-      color: #1987a1;
+      box-sizing: border-box;
     }
 
-    /* Wave Background */
-    .wave-bg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: -1;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle at 50% 50%, #1987a122 10%, transparent 70%),
-                  radial-gradient(circle at 70% 30%, #1987a133 10%, transparent 70%),
-                  radial-gradient(circle at 30% 70%, #1987a11a 10%, transparent 70%);
-      background-size: cover;
-      animation: waveMove 15s linear infinite alternate;
-      filter: blur(60px);
+    html, body {
+      background: var(--main-bg);
+      color: var(--light);
+      font-family: var(--font);
+      scroll-behavior: smooth;
     }
 
-    @keyframes waveMove {
-      0% { transform: translateX(0%) translateY(0%) scale(1); }
-      100% { transform: translateX(-20%) translateY(-10%) scale(1.05); }
-    }
-
-    .container {
-      z-index: 1;
-      position: relative;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+    header {
       text-align: center;
-      padding: 20px;
+      padding: 100px 20px 80px;
     }
 
-    .logo {
-      width: 130px;
-      margin-bottom: 20px;
-      animation: fadeSlideIn 1.2s ease-out;
-    }
-
-    h1 {
+    header h1 {
       font-size: 3rem;
-      color: #1987a1;
-      margin-bottom: 10px;
-      animation: glow 2s ease-in-out infinite alternate;
+      margin-bottom: 20px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s ease;
     }
 
-    .features {
-      font-size: 1.3rem;
-      min-height: 2em;
+    header p {
+      font-size: 1.25rem;
+      color: var(--dim);
       margin-bottom: 30px;
-      color: #1987a1;
-      animation: slideInRight 0.8s ease-out;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s ease 0.2s;
     }
 
-    .fun-message {
+    .counter {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--accent);
+      opacity: 0;
+      transition: all 0.6s ease 0.4s;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 25px;
+      padding: 14px 28px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      text-decoration: none;
       font-size: 1rem;
-      color: #1987a1;
-      margin-top: 20px;
-      animation: pulse 2s infinite;
+      transition: background 0.2s, transform 0.2s;
     }
 
-    /* Text Animations */
-    @keyframes fadeSlideIn {
-      0% { opacity: 0; transform: translateY(-30px); }
-      100% { opacity: 1; transform: translateY(0); }
+    .btn:hover {
+      background: #104080;
+      transform: translateY(-2px);
     }
 
-    @keyframes slideInRight {
-      0% { opacity: 0; transform: translateX(100%); }
-      100% { opacity: 1; transform: translateX(0); }
+    section {
+      padding: 80px 20px;
+      border-top: 1px solid #2a2a3a;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s ease;
     }
 
-    @keyframes pulse {
-      0% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.7; transform: scale(1.05); }
-      100% { opacity: 1; transform: scale(1); }
+    section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      text-align: center;
     }
 
-    @keyframes glow {
-      from {
-        text-shadow: 0 0 10px #1987a1, 0 0 20px #1987a1;
+    section p {
+      max-width: 800px;
+      margin: 0 auto 40px;
+      font-size: 1.1rem;
+      color: var(--dim);
+      text-align: center;
+    }
+
+    .integration-grid,
+    .icon-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .integration-grid div,
+    .icon-grid div {
+      background: var(--section-bg);
+      padding: 20px;
+      border-radius: 8px;
+      min-width: 120px;
+      text-align: center;
+      color: var(--light);
+    }
+
+    .code-block {
+      background: #000;
+      padding: 20px;
+      border-radius: 8px;
+      font-family: monospace;
+      max-width: 700px;
+      margin: 20px auto;
+      color: #00ffcc;
+      text-align: left;
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      font-size: 0.9rem;
+      color: var(--dim);
+      border-top: 1px solid #2a2a3a;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+      margin: 0 5px;
+    }
+
+    .visible {
+      opacity: 1 !important;
+      transform: translateY(0) !important;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 2rem;
       }
-      to {
-        text-shadow: 0 0 15px #1987a1, 0 0 25px #1987a1;
+
+      .counter {
+        font-size: 1.5rem;
+      }
+
+      .btn {
+        font-size: 0.95rem;
+      }
+
+      section h2 {
+        font-size: 1.5rem;
       }
     }
   </style>
-<script src="https://rekietalabs.com/force-favicon.js"></script>
 </head>
 <body>
 
-  <!-- Animated Wave Background -->
-  <div class="wave-bg"></div>
+  <!-- Hero Section -->
+  <header>
+    <h1 id="heroTitle">Welcome to MyLabs Accounts</h1>
+    <p id="heroSub">Secure, integrated, and built for scale.</p>
+    <div class="counter" id="userCounter">Loading...</div>
+    <a href="#signup" class="btn">Get Started</a>
+  </header>
 
-  <!-- Main Content -->
-  <div class="container">
-    <img src="MyLabsLogo.png" alt="MyLabs Logo" class="logo" />
-    <h1>MyLabs Accounts</h1>
-    <div class="features" id="features">Connecting all of RekietaLabs...</div>
-    <div class="fun-message">🚀 Were launching soon!</div>
-  </div>
+  <!-- About + Signup -->
+  <section id="signup">
+    <h2>What is MyLabs?</h2>
+    <p>MyLabs is your personal gateway to all RekietaLabs features. With one account, access APIs, services, and community tools.</p>
+    <a href="https://accounts.rekietalabs.com/mylabs/signup" class="btn">Create Your Free Account</a>
+  </section>
 
-  <!-- Rotating Features Script -->
+  <!-- Integrations -->
+  <section>
+    <h2>Integrate with Tools You Use</h2>
+    <p>No-code or full-code, you decide.</p>
+    <div class="integration-grid">
+      <div>Supabase</div>
+      <div>Replit</div>
+      <div>Email</div>
+      <div>Webhooks</div>
+      <div>Custom APIs</div>
+    </div>
+  </section>
+
+  <!-- Marketplace -->
+  <section>
+    <h2>RekietaLabs Marketplace</h2>
+    <p>Browse and share models with the community. Everything is free to download and user-published.</p>
+    <a href="#" class="btn">Visit Marketplace</a>
+  </section>
+
+  <!-- API Section -->
+  <section>
+    <h2>Build on Our API</h2>
+    <p>From Replit to backend scripts, call endpoints, manage data, and automate workflows using your MyLabs token.</p>
+    <div class="code-block">
+      curl https://api.rekietalabs.com/user/data
+    </div>
+    <a href="https://docs.rekietalabs.com" class="btn">API Docs</a>
+  </section>
+
+  <!-- Why MyLabs -->
+  <section>
+    <h2>Why MyLabs?</h2>
+    <p>Built by developers for developers — scalable, secure, and made to support your projects and tools.</p>
+    <div class="icon-grid">
+      <div>🔐<br>Secure Auth</div>
+      <div>⚙️<br>Dev Ready</div>
+      <div>🌐<br>Open Integrations</div>
+      <div>🚀<br>Built for Scale</div>
+    </div>
+  </section>
+
+  <!-- About RekietaLabs -->
+  <section>
+    <h2>About RekietaLabs</h2>
+    <p>MyLabs is proudly developed and maintained by RekietaLabs, a trusted name in digital tools, automation, and open source.</p>
+    <a href="#" class="btn">Learn About RekietaLabs</a>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    © 2025 RekietaLabs — All rights reserved.<br>
+    <a href="#">Terms</a> • 
+    <a href="#">Privacy</a> • 
+    <a href="#">Support</a>
+  </footer>
+
+  <!-- Counter + Animation Scripts -->
   <script>
-    const messages = [
-      "Secure and easy login",
-      "Connect across RekietaLabs services",
-      "Upload and manage your 3D prints",
-      "Customize your MyLabs experience",
-      "Share from acrros the globe",
-      "Coming soon to accounts.rekietalabs.com"
-    ];
+    // Animated Counter
+    const counter = document.getElementById('userCounter');
+    const startValue = 11800;
+    const endValue = 12304;
+    const duration = 2000;
+    const steps = 50;
+    const increment = (endValue - startValue) / steps;
+    let current = startValue;
+    let stepTime = duration / steps;
 
-    let current = 0;
-    const featureDiv = document.getElementById('features');
-
-    function showNextMessage() {
-      featureDiv.style.opacity = 0;
-      featureDiv.style.animation = "none";
-      void featureDiv.offsetWidth;
-      setTimeout(() => {
-        featureDiv.textContent = messages[current];
-        featureDiv.style.opacity = 1;
-        featureDiv.style.animation = "slideInRight 0.8s ease-out";
-        current = (current + 1) % messages.length;
-      }, 500);
+    function updateCounter() {
+      counter.textContent = Math.floor(current).toLocaleString() + " active users";
+      if (current < endValue) {
+        current += increment;
+        setTimeout(updateCounter, stepTime);
+      } else {
+        counter.textContent = endValue.toLocaleString() + " active users";
+      }
     }
 
-    setInterval(showNextMessage, 3000);
+    window.onload = () => {
+      updateCounter();
+
+      // Animate Hero Elements
+      document.getElementById('heroTitle').classList.add('visible');
+      document.getElementById('heroSub').classList.add('visible');
+      counter.classList.add('visible');
+    };
+
+    // Section fade-in on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, {
+      threshold: 0.2
+    });
+
+    document.querySelectorAll("section").forEach(section => {
+      observer.observe(section);
+    });
   </script>
 
 </body>
