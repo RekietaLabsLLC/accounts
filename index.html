@@ -3,15 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MyLabs Accounts by RekietaLabs</title>
+  <title>MyLabs Accounts - RekietaLabs</title>
   <style>
     :root {
-      --main-bg: #0f0f1a;
-      --accent: #1753aa;
-      --light: #ffffff;
-      --dim: #c7c7d0;
-      --section-bg: #1a1a2a;
-      --font: 'Segoe UI', sans-serif;
+      --brand: #1753aa;
+      --text: #ffffff;
+      --bg: #0d0d0d;
+      --gray: #bbbbbb;
     }
 
     * {
@@ -20,271 +18,281 @@
       box-sizing: border-box;
     }
 
-    html, body {
-      background: var(--main-bg);
-      color: var(--light);
-      font-family: var(--font);
-      scroll-behavior: smooth;
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
     }
 
     header {
+      position: fixed;
+      top: -80px;
+      left: 0;
+      width: 100%;
+      background: rgba(13, 13, 13, 0.95);
+      backdrop-filter: blur(6px);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      z-index: 999;
+      transition: top 0.4s ease;
+    }
+
+    header.show {
+      top: 0;
+    }
+
+    header a {
+      text-decoration: none;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: background 0.3s;
+    }
+
+    .btn-home {
+      background: none;
+      color: var(--gray);
+    }
+
+    .btn-market {
+      background: none;
+      color: var(--gray);
+    }
+
+    .btn-login {
+      background: #333;
+      color: var(--text);
+    }
+
+    .btn-signup {
+      background: var(--brand);
+      color: white;
+    }
+
+    section {
+      padding: 5rem 2rem;
+      max-width: 1000px;
+      margin: auto;
       text-align: center;
-      padding: 100px 20px 80px;
     }
 
-    header h1 {
-      font-size: 3rem;
-      margin-bottom: 20px;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: all 0.6s ease;
+    h1, h2 {
+      font-weight: 700;
+      margin-bottom: 1rem;
     }
 
-    header p {
-      font-size: 1.25rem;
-      color: var(--dim);
-      margin-bottom: 30px;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: all 0.6s ease 0.2s;
+    p {
+      color: #cccccc;
     }
 
     .counter {
       font-size: 2rem;
       font-weight: bold;
-      color: var(--accent);
-      opacity: 0;
-      transition: all 0.6s ease 0.4s;
+      margin-top: 1rem;
+      color: var(--brand);
     }
 
-    .btn {
-      display: inline-block;
-      margin-top: 25px;
-      padding: 14px 28px;
-      background: var(--accent);
-      color: #fff;
+    .cta-button {
+      background: var(--brand);
+      color: white;
       border: none;
-      border-radius: 6px;
-      text-decoration: none;
+      padding: 0.75rem 2rem;
       font-size: 1rem;
-      transition: background 0.2s, transform 0.2s;
+      margin-top: 1.5rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.2s;
     }
 
-    .btn:hover {
-      background: #104080;
-      transform: translateY(-2px);
+    .cta-button:hover {
+      transform: scale(1.05);
     }
 
-    section {
-      padding: 80px 20px;
-      border-top: 1px solid #2a2a3a;
-      opacity: 0;
-      transform: translateY(40px);
-      transition: all 0.8s ease;
+    .section-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
     }
 
-    section h2 {
-      font-size: 2rem;
-      margin-bottom: 20px;
-      text-align: center;
+    .card {
+      background: #111;
+      padding: 1.5rem;
+      border-radius: 12px;
+      border: 1px solid #222;
+      transition: transform 0.3s ease;
     }
 
-    section p {
-      max-width: 800px;
-      margin: 0 auto 40px;
-      font-size: 1.1rem;
-      color: var(--dim);
-      text-align: center;
-    }
-
-    .integration-grid,
-    .icon-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
-      margin-top: 30px;
-    }
-
-    .integration-grid div,
-    .icon-grid div {
-      background: var(--section-bg);
-      padding: 20px;
-      border-radius: 8px;
-      min-width: 120px;
-      text-align: center;
-      color: var(--light);
-    }
-
-    .code-block {
-      background: #000;
-      padding: 20px;
-      border-radius: 8px;
-      font-family: monospace;
-      max-width: 700px;
-      margin: 20px auto;
-      color: #00ffcc;
-      text-align: left;
+    .card:hover {
+      transform: translateY(-5px);
     }
 
     footer {
+      padding: 2rem;
+      background: #111;
       text-align: center;
-      padding: 40px 20px;
+      color: #777;
       font-size: 0.9rem;
-      color: var(--dim);
-      border-top: 1px solid #2a2a3a;
     }
 
-    footer a {
-      color: var(--accent);
-      text-decoration: none;
-      margin: 0 5px;
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
     }
 
-    .visible {
-      opacity: 1 !important;
-      transform: translateY(0) !important;
+    .fade-in.visible {
+      opacity: 1;
+      transform: none;
     }
 
     @media (max-width: 600px) {
-      header h1 {
-        font-size: 2rem;
+      header {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
       }
 
-      .counter {
-        font-size: 1.5rem;
-      }
-
-      .btn {
-        font-size: 0.95rem;
-      }
-
-      section h2 {
-        font-size: 1.5rem;
+      .cta-button {
+        width: 100%;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- Hero Section -->
-  <header>
-    <h1 id="heroTitle">Welcome to MyLabs Accounts</h1>
-    <p id="heroSub">Secure, integrated, and built for scale.</p>
-    <div class="counter" id="userCounter">Loading...</div>
-    <a href="#signup" class="btn">Get Started</a>
+  <header id="mainHeader">
+    <a href="https://rekietalabs.com" class="btn-home">Home</a>
+    <a href="#marketplace" class="btn-market">Marketplace</a>
+    <a href="https://accounts.rekietalabs.com/login" class="btn-login">Login</a>
+    <a href="https://accounts.rekietalabs.com/mylabs/signup" class="btn-signup">Signup</a>
   </header>
 
-  <!-- About + Signup -->
-  <section id="signup">
+  <!-- Hero -->
+  <section class="fade-in">
+    <h1>Welcome to MyLabs Accounts</h1>
+    <p>Secure, integrated, and built for scale.</p>
+    <div id="userCounter" class="counter">Loading users...</div>
+    <a href="https://accounts.rekietalabs.com/mylabs/signup">
+      <button class="cta-button">Get Started</button>
+    </a>
+  </section>
+
+  <!-- What is MyLabs -->
+  <section class="fade-in">
     <h2>What is MyLabs?</h2>
-    <p>MyLabs is your personal gateway to all RekietaLabs features. With one account, access APIs, services, and community tools.</p>
-    <a href="https://accounts.rekietalabs.com/mylabs/signup" class="btn">Create Your Free Account</a>
+    <p>MyLabs is your single sign-in hub for all RekietaLabs tools, services, and APIs.</p>
+    <a href="https://accounts.rekietalabs.com/mylabs/signup">
+      <button class="cta-button">Create Your Free Account</button>
+    </a>
   </section>
 
   <!-- Integrations -->
-  <section>
-    <h2>Integrate with Tools You Use</h2>
-    <p>No-code or full-code, you decide.</p>
-    <div class="integration-grid">
-      <div>Supabase</div>
-      <div>Replit</div>
-      <div>Email</div>
-      <div>Webhooks</div>
-      <div>Custom APIs</div>
+  <section class="fade-in">
+    <h2>Powerful Integrations</h2>
+    <p>Connect with services like Supabase, Replit, email webhooks, and more — no code or full control.</p>
+    <div class="section-grid">
+      <div class="card">Supabase</div>
+      <div class="card">Replit</div>
+      <div class="card">Email Hooks</div>
+      <div class="card">REST API</div>
     </div>
   </section>
 
   <!-- Marketplace -->
-  <section>
+  <section class="fade-in" id="marketplace">
     <h2>RekietaLabs Marketplace</h2>
-    <p>Browse and share models with the community. Everything is free to download and user-published.</p>
-    <a href="#" class="btn">Visit Marketplace</a>
+    <p>A community-driven hub for sharing and downloading models — 100% free and open.</p>
+    <a href="#">
+      <button class="cta-button">Visit Marketplace</button>
+    </a>
   </section>
 
-  <!-- API Section -->
-  <section>
-    <h2>Build on Our API</h2>
-    <p>From Replit to backend scripts, call endpoints, manage data, and automate workflows using your MyLabs token.</p>
-    <div class="code-block">
+  <!-- API -->
+  <section class="fade-in">
+    <h2>RekietaLabs API</h2>
+    <p>Access your data, automate workflows, and integrate with any platform using secure API calls.</p>
+    <code style="background:#111; padding: 0.75rem 1rem; display: block; border-radius: 8px; margin-top: 1rem;">
       curl https://api.rekietalabs.com/user/data
-    </div>
-    <a href="https://docs.rekietalabs.com" class="btn">API Docs</a>
+    </code>
+    <a href="https://docs.rekietalabs.com">
+      <button class="cta-button" style="margin-top: 1.5rem;">API Docs</button>
+    </a>
   </section>
 
   <!-- Why MyLabs -->
-  <section>
-    <h2>Why MyLabs?</h2>
-    <p>Built by developers for developers — scalable, secure, and made to support your projects and tools.</p>
-    <div class="icon-grid">
-      <div>🔐<br>Secure Auth</div>
-      <div>⚙️<br>Dev Ready</div>
-      <div>🌐<br>Open Integrations</div>
-      <div>🚀<br>Built for Scale</div>
+  <section class="fade-in">
+    <h2>Why Choose MyLabs?</h2>
+    <div class="section-grid">
+      <div class="card">🔐 Secure Authentication</div>
+      <div class="card">⚙️ Developer Ready</div>
+      <div class="card">🌐 Open Integration</div>
+      <div class="card">🧩 Trusted by RekietaLabs</div>
     </div>
   </section>
 
   <!-- About RekietaLabs -->
-  <section>
-    <h2>About RekietaLabs</h2>
-    <p>MyLabs is proudly developed and maintained by RekietaLabs, a trusted name in digital tools, automation, and open source.</p>
-    <a href="#" class="btn">Learn About RekietaLabs</a>
+  <section class="fade-in">
+    <h2>Built by RekietaLabs</h2>
+    <p>MyLabs is made by RekietaLabs — a trusted name in tools, automation, and user control.</p>
+    <a href="https://rekietalabs.com">
+      <button class="cta-button">Learn More</button>
+    </a>
   </section>
 
-  <!-- Footer -->
   <footer>
-    © 2025 RekietaLabs — All rights reserved.<br>
-    <a href="#">Terms</a> • 
-    <a href="#">Privacy</a> • 
-    <a href="#">Support</a>
+    &copy; 2025 RekietaLabs. All rights reserved.
   </footer>
 
-  <!-- Counter + Animation Scripts -->
+  <!-- JS -->
   <script>
-    // Animated Counter
-    const counter = document.getElementById('userCounter');
-    const startValue = 11800;
-    const endValue = 12304;
-    const duration = 2000;
-    const steps = 50;
-    const increment = (endValue - startValue) / steps;
-    let current = startValue;
-    let stepTime = duration / steps;
-
-    function updateCounter() {
-      counter.textContent = Math.floor(current).toLocaleString() + " active users";
-      if (current < endValue) {
-        current += increment;
-        setTimeout(updateCounter, stepTime);
+    // Scroll Header
+    const header = document.getElementById('mainHeader');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 100) {
+        header.classList.add('show');
       } else {
-        counter.textContent = endValue.toLocaleString() + " active users";
+        header.classList.remove('show');
       }
-    }
+    });
 
-    window.onload = () => {
-      updateCounter();
+// Counter Logic
+const counter = document.getElementById('userCounter');
+const startValue = 0; // Start from 0
+const endValue = 12304; // Your target number
+const duration = 2000; // Total duration in milliseconds
+const steps = 50;
+const increment = (endValue - startValue) / steps;
+let current = startValue;
+let stepTime = duration / steps;
 
-      // Animate Hero Elements
-      document.getElementById('heroTitle').classList.add('visible');
-      document.getElementById('heroSub').classList.add('visible');
-      counter.classList.add('visible');
-    };
+function updateCounter() {
+  counter.textContent = Math.floor(current).toLocaleString() + " active users";
+  if (current < endValue) {
+    current += increment;
+    setTimeout(updateCounter, stepTime);
+  } else {
+    counter.textContent = endValue.toLocaleString() + " active users";
+  }
+}
 
-    // Section fade-in on scroll
-    const observer = new IntersectionObserver((entries) => {
+updateCounter();
+
+    // Animate on Scroll
+    const fadeElements = document.querySelectorAll('.fade-in');
+    const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
         }
       });
-    }, {
-      threshold: 0.2
-    });
+    }, { threshold: 0.1 });
 
-    document.querySelectorAll("section").forEach(section => {
-      observer.observe(section);
-    });
+    fadeElements.forEach(el => observer.observe(el));
   </script>
-
 </body>
 </html>
