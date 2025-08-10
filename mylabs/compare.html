@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyLabs Accounts - Subscription Comparison</title>
+<style>
+    :root {
+        --brand-color: #1753aa;
+        --bg-color: #0f0f0f;
+        --text-color: #fff;
+        --header-bg: #1a1a1a;
+        --border-color: #2a2a2a;
+        --row-alt: #141414;
+    }
+    body {
+        margin: 0;
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: var(--bg-color);
+        color: var(--text-color);
+    }
+    header {
+        text-align: center;
+        padding: 25px 15px;
+        border-bottom: 2px solid var(--brand-color);
+    }
+    header img {
+        width: 50px;
+        height: 50px;
+        vertical-align: middle;
+    }
+    header h1 {
+        display: inline-block;
+        margin-left: 12px;
+        font-size: 1.8em;
+        font-weight: 600;
+    }
+    table {
+        width: 95%;
+        margin: 30px auto;
+        border-collapse: collapse;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    }
+    thead {
+        background: var(--brand-color);
+        position: sticky;
+        top: 0;
+        z-index: 2;
+    }
+    thead th {
+        padding: 16px;
+        text-align: center;
+        color: #fff;
+        font-size: 1.1em;
+    }
+    tbody th {
+        text-align: left;
+        padding: 14px;
+        background: var(--header-bg);
+        font-weight: 500;
+    }
+    tbody td {
+        text-align: center;
+        padding: 14px;
+        font-size: 1.1em;
+    }
+    tbody tr:nth-child(even) {
+        background: var(--row-alt);
+    }
+    tbody tr:hover {
+        background: rgba(23, 83, 170, 0.2);
+        transition: background 0.2s ease-in-out;
+    }
+    .price {
+        font-size: 0.95em;
+        font-weight: bold;
+        color: #ddd;
+        display: block;
+        margin-top: 4px;
+    }
+    .check {
+        color: #2ecc71;
+        font-size: 1.5em;
+    }
+    .cross {
+        color: #e74c3c;
+        font-size: 1.5em;
+    }
+    .coming-soon {
+        opacity: 0.85;
+        position: relative;
+    }
+    .coming-soon::after {
+        content: "COMING SOON";
+        display: inline-block;
+        font-size: 0.7em;
+        color: #fff;
+        background: #888;
+        padding: 3px 6px;
+        border-radius: 6px;
+        margin-left: 6px;
+        font-weight: bold;
+    }
+    @media (max-width: 768px) {
+        table, thead, tbody, th, td, tr {
+            display: block;
+        }
+        thead tr {
+            display: none;
+        }
+        tbody tr {
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px;
+        }
+        tbody td, tbody th {
+            border: none;
+            padding: 8px;
+            text-align: left;
+        }
+        tbody td::before {
+            content: attr(data-label);
+            font-weight: bold;
+            display: inline-block;
+            width: 140px;
+            color: var(--brand-color);
+        }
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <img src="https://accounts.rekietalabs.com/favicon.ico" alt="RekietaLabs Logo">
+    <h1>MyLabs Accounts - Subscription Comparison</h1>
+</header>
+
+<table>
+    <thead>
+        <tr>
+            <th>Features</th>
+            <th>Free <span class="price">Free!</span></th>
+            <th>Premium <span class="price">$5 / Month</span></th>
+            <th class="coming-soon">Ultra <span class="price">$10 / Month</span></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>A Free Account</th>
+            <td class="check">&#10004;</td>
+            <td class="check">&#10004;</td>
+            <td class="check">&#10004;</td>
+        </tr>
+        <tr>
+            <th>A Free Marketplace Publisher Account</th>
+            <td class="check">&#10004;</td>
+            <td class="check">&#10004;</td>
+            <td class="check">&#10004;</td>
+        </tr>
+        <tr>
+            <th>Basic Account Features</th>
+            <td class="check">&#10004;</td>
+            <td class="check">&#10004;</td>
+            <td class="check">&#10004;</td>
+        </tr>
+                <tr>
+            <th>Premium Account Features</th>
+            <td class="cross">&#10006;</td>
+            <td class="check">&#10004;</td>
+            <td class="check">&#10004;</td>
+        </tr>
+        <tr>
+            <th>Basic Developer API</th>
+            <td class="cross">&#10006;</td>
+            <td class="check">&#10004;</td>
+            <td class="check">&#10004;</td>
+        </tr>
+        <tr>
+            <th>A Basic Publisher Page</th>
+            <td class="cross">&#10006;</td>
+            <td class="check">&#10004;</td>
+            <td class="check">&#10004;</td>
+        </tr>
+        <tr>
+            <th>3 Model Boosts Per Month</th>
+            <td class="cross">&#10006;</td>
+            <td class="check">&#10004;</td>
+            <td class="cross">&#10006;</td>
+        </tr>
+        <tr>
+            <th>Participate in model giveaways</th>
+            <td class="cross">&#10006;</td>
+            <td class="check">&#10004;</td>
+            <td class="check">&#10004;</td>
+        </tr>
+        <tr>
+            <th>Premium Developer API</th>
+            <td class="cross">&#10006;</td>
+            <td class="cross">&#10006;</td>
+            <td class="check">&#10004;</td>
+        </tr>
+        <tr>
+            <th>Custom API Domain</th>
+            <td class="cross">&#10006;</td>
+            <td class="cross">&#10006;</td>
+            <td class="check">&#10004;</td>
+        </tr>
+        <tr>
+            <th>A Premium Publisher Page</th>
+            <td class="cross">&#10006;</td>
+            <td class="cross">&#10006;</td>
+            <td class="check">&#10004;</td>
+        </tr>
+        <tr>
+            <th>Unlimited Model Boosts</th>
+            <td class="cross">&#10006;</td>
+            <td class="cross">&#10006;</td>
+            <td class="check">&#10004;</td>
+        </tr>
+        <tr>
+            <th>Participate in premium model giveaways</th>
+            <td class="cross">&#10006;</td>
+            <td class="cross">&#10006;</td>
+            <td class="check">&#10004;</td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
