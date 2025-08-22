@@ -8,7 +8,7 @@
   const link = document.createElement("link");
   link.rel = "icon";
   link.href = faviconUrl;
-  link.type = "image/jpeg";
+  link.type = "image/png";
 
   // Append it to the head
   document.head.appendChild(link);
