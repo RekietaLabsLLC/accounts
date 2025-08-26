@@ -16,6 +16,7 @@
       align-items: center;
       height: 100vh;
     }
+
     .container {
       background-color: #111;
       padding: 2rem;
@@ -25,10 +26,12 @@
       max-width: 400px;
       text-align: center;
     }
+
     h1 {
       color: #1753aa;
       margin-bottom: 1.5rem;
     }
+
     input[type="email"],
     input[type="password"] {
       width: 100%;
@@ -40,6 +43,7 @@
       color: white;
       font-size: 1rem;
     }
+
     button {
       width: 100%;
       padding: 10px;
@@ -50,16 +54,13 @@
       font-size: 1rem;
       cursor: pointer;
     }
-    .error-message {
-      color: #ff5555;
-      margin-bottom: 1rem;
-      font-size: 0.9rem;
-    }
+
     .divider {
       margin: 1.5rem 0;
       color: #aaa;
       font-size: 0.9rem;
     }
+
     .github-button {
       display: flex;
       align-items: center;
@@ -72,17 +73,26 @@
       color: white;
       cursor: pointer;
     }
+
     .github-button img {
-      height: 32px;
-      width: 32px;
+      height: 24px;
+      width: 24px;
       border-radius: 50%;
+    }
+
+    .error-msg {
+      color: #ff5555;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Login</h1>
-    <div class="error-message" id="error-msg"></div>
+
+    <div id="error-container" class="error-msg"></div>
+
     <form id="login-form">
       <input type="email" id="email" placeholder="Email" required />
       <input type="password" id="password" placeholder="Password" required />
@@ -100,96 +110,79 @@
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-    const errorMsg = document.getElementById("error-msg");
+    const errorContainer = document.getElementById("error-container");
     const githubBtn = document.getElementById("github-btn");
     const githubLogo = document.getElementById("github-logo");
     const githubText = document.getElementById("github-text");
 
     let supabase;
 
-    // Fetch Supabase config from API
-    async function initSupabase() {
+    // Load Supabase config from API
+    async function loadConfig() {
       try {
-        const res = await fetch('/config-login');
+        const res = await fetch("https://api.rekietalabs.com/config-login");
+        if (!res.ok) throw new Error("Failed to load login config");
         const data = await res.json();
         supabase = createClient(data.supabaseUrl, data.supabaseAnonKey);
       } catch (err) {
-        errorMsg.textContent = "Failed to load login configuration.";
-        console.error(err);
+        errorContainer.textContent = err.message;
       }
     }
 
-    await initSupabase();
+    await loadConfig();
 
-    // Handle traditional email/password login
+    // Email/Password login
     document.getElementById("login-form").addEventListener("submit", async (e) => {
       e.preventDefault();
-      errorMsg.textContent = "";
-
+      errorContainer.textContent = "";
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
 
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-
       if (error) {
-        errorMsg.textContent = error.message;
+        errorContainer.textContent = error.message;
       } else {
         window.location.href = "/mylabs/dashboard";
       }
     });
 
-    // Handle GitHub OAuth redirect token
-    async function handleGitHubRedirect() {
+    // GitHub login
+    githubBtn.addEventListener("click", async () => {
+      errorContainer.textContent = "";
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "github",
+        options: {
+          redirectTo: "https://accounts.rekietalabs.com/mylabs/login"
+        }
+      });
+      if (error) errorContainer.textContent = error.message;
+    });
+
+    // Handle OAuth redirect
+    async function handleOAuthRedirect() {
       const hash = window.location.hash;
       if (!hash.includes("access_token")) return;
 
-      const params = new URLSearchParams(hash.slice(1));
-      const accessToken = params.get("access_token");
-      const expiresIn = params.get("expires_in");
+      const params = new URLSearchParams(hash.substring(1));
+      const access_token = params.get("access_token");
 
-      // Store the GitHub token securely in API cookie
-      try {
-        await fetch("/config-login/github-token", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ access_token: accessToken })
-        });
-      } catch (err) {
-        errorMsg.textContent = "Failed to store GitHub token.";
-        console.error(err);
-      }
+      if (access_token) {
+        // Get user info from Supabase with the access token
+        const { data: { user }, error } = await supabase.auth.getUser(access_token);
+        if (error) {
+          errorContainer.textContent = error.message;
+          return;
+        }
 
-      // Fetch GitHub user info
-      try {
-        const userRes = await fetch("https://api.github.com/user", {
-          headers: { Authorization: `token ${accessToken}` }
-        });
-        const userData = await userRes.json();
-
-        githubLogo.src = userData.avatar_url;
-        githubText.textContent = `Continue as ${userData.login}`;
-
-        githubBtn.onclick = () => {
+        githubLogo.src = user.user_metadata?.avatar_url || "/mylabs/github-mark.png";
+        githubText.textContent = `Continue as ${user.user_metadata?.full_name || user.email}`;
+        githubBtn.addEventListener("click", () => {
           window.location.href = "/mylabs/dashboard";
-        };
-      } catch (err) {
-        errorMsg.textContent = "Failed to fetch GitHub user info.";
-        console.error(err);
+        });
       }
     }
 
-    githubBtn.addEventListener("click", async () => {
-      // Initiate OAuth flow if user hasn't already signed in via redirect
-      if (!githubBtn.onclick) {
-        const { data, error } = await supabase.auth.signInWithOAuth({ provider: "github" });
-        if (error) {
-          errorMsg.textContent = "GitHub login failed.";
-          console.error(error);
-        }
-      }
-    });
-
-    handleGitHubRedirect();
+    await handleOAuthRedirect();
   </script>
 </body>
 </html>
