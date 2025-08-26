@@ -71,6 +71,7 @@
       border-radius: 6px;
       text-decoration: none;
       color: white;
+      cursor: pointer;
     }
 
     .github-button img {
@@ -91,64 +92,100 @@
 
     <div class="divider">or</div>
 
-    <a id="github-btn" class="github-button" href="#">
+    <div id="github-btn" class="github-button">
       <img id="github-logo" src="/mylabs/github-mark.png" alt="GitHub Logo" />
       <span id="github-text">Login with GitHub</span>
-    </a>
+    </div>
   </div>
 
   <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-    const supabaseUrl = 'https://rwwrrrutvvsbanbzzwbq.supabase.co';
-    const supabaseKey = '<your-anon-key-here>'; // Replace this with your real anon key
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
     const githubBtn = document.getElementById('github-btn');
     const githubLogo = document.getElementById('github-logo');
     const githubText = document.getElementById('github-text');
 
+    const API_BASE = 'https://api.rekietalabs.com';
+
+    // ----------------------
+    // Email/Password Login
+    // ----------------------
     document.getElementById("login-form").addEventListener("submit", async (e) => {
       e.preventDefault();
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
 
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) {
-        alert(error.message);
-      } else {
-        window.location.href = "/mylabs/dashboard";
+      try {
+        const res = await fetch(`${API_BASE}/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          document.querySelector('.container').insertAdjacentHTML(
+            'beforeend',
+            `<p style="color:red;">${data.error}</p>`
+          );
+          return;
+        }
+
+        window.location.href = '/mylabs/dashboard';
+      } catch (err) {
+        console.error(err);
       }
     });
 
-    async function handleOAuthRedirect() {
-      const { data: { user }, error } = await supabase.auth.getUser();
+    // ----------------------
+    // GitHub OAuth
+    // ----------------------
+    async function handleGitHubToken(token) {
+      try {
+        // Send token to server to set HTTP-only cookie
+        const res = await fetch(`${API_BASE}/config-login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ provider_token: token }),
+          credentials: 'include'
+        });
+        const data = await res.json();
 
-      if (user) {
-        const created = new Date(user.created_at);
-        const updated = new Date(user.updated_at);
-        const isNew = Math.abs(updated - created) < 5000;
-
-        if (isNew) {
-          githubLogo.src = user.user_metadata?.avatar_url || "/mylabs/github-mark.png";
-          githubText.textContent = `Continue as ${user.user_metadata?.full_name || user.email}`;
-          githubBtn.href = "#";
-          githubBtn.addEventListener("click", () => {
-            window.location.href = "/mylabs/dashboard";
-          });
-        } else {
-          window.location.href = "/mylabs/dashboard";
+        if (!res.ok) {
+          document.querySelector('.container').insertAdjacentHTML(
+            'beforeend',
+            `<p style="color:red;">${data.error}</p>`
+          );
+          return;
         }
+
+        // Update button to "Continue as GitHub Name" with avatar
+        githubLogo.src = data.user.avatar_url || '/mylabs/github-mark.png';
+        githubText.textContent = `Continue as ${data.user.full_name || data.user.email}`;
+
+        githubBtn.addEventListener('click', () => {
+          window.location.href = '/mylabs/dashboard';
+        });
+
+      } catch (err) {
+        console.error(err);
       }
     }
 
-    githubBtn.addEventListener("click", async (e) => {
-      e.preventDefault();
-      const { data, error } = await supabase.auth.signInWithOAuth({ provider: "github" });
-      if (error) console.error(error);
-    });
+    // ----------------------
+    // Extract token from URL fragment
+    // ----------------------
+    const fragment = new URLSearchParams(window.location.hash.slice(1));
+    const accessToken = fragment.get('access_token');
 
-    handleOAuthRedirect();
+    if (accessToken) {
+      handleGitHubToken(accessToken);
+      // Clean up URL fragment
+      history.replaceState(null, '', window.location.pathname);
+    } else {
+      // Default click -> GitHub OAuth redirect
+      githubBtn.addEventListener('click', async () => {
+        window.location.href = `${API_BASE}/login/github`; // your OAuth redirect endpoint
+      });
+    }
   </script>
 </body>
 </html>
