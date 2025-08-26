@@ -16,7 +16,6 @@
       align-items: center;
       height: 100vh;
     }
-
     .container {
       background-color: #111;
       padding: 2rem;
@@ -26,12 +25,10 @@
       max-width: 400px;
       text-align: center;
     }
-
     h1 {
       color: #1753aa;
       margin-bottom: 1.5rem;
     }
-
     input[type="email"],
     input[type="password"] {
       width: 100%;
@@ -43,7 +40,6 @@
       color: white;
       font-size: 1rem;
     }
-
     button {
       width: 100%;
       padding: 10px;
@@ -54,13 +50,16 @@
       font-size: 1rem;
       cursor: pointer;
     }
-
+    .error-message {
+      color: #ff5555;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
     .divider {
       margin: 1.5rem 0;
       color: #aaa;
       font-size: 0.9rem;
     }
-
     .github-button {
       display: flex;
       align-items: center;
@@ -73,10 +72,9 @@
       color: white;
       cursor: pointer;
     }
-
     .github-button img {
-      height: 24px;
-      width: 24px;
+      height: 32px;
+      width: 32px;
       border-radius: 50%;
     }
   </style>
@@ -84,6 +82,7 @@
 <body>
   <div class="container">
     <h1>Login</h1>
+    <div class="error-message" id="error-msg"></div>
     <form id="login-form">
       <input type="email" id="email" placeholder="Email" required />
       <input type="password" id="password" placeholder="Password" required />
@@ -99,93 +98,98 @@
   </div>
 
   <script type="module">
-    const githubBtn = document.getElementById('github-btn');
-    const githubLogo = document.getElementById('github-logo');
-    const githubText = document.getElementById('github-text');
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-    const API_BASE = 'https://api.rekietalabs.com';
+    const errorMsg = document.getElementById("error-msg");
+    const githubBtn = document.getElementById("github-btn");
+    const githubLogo = document.getElementById("github-logo");
+    const githubText = document.getElementById("github-text");
 
-    // ----------------------
-    // Email/Password Login
-    // ----------------------
+    let supabase;
+
+    // Fetch Supabase config from API
+    async function initSupabase() {
+      try {
+        const res = await fetch('/config-login');
+        const data = await res.json();
+        supabase = createClient(data.supabaseUrl, data.supabaseAnonKey);
+      } catch (err) {
+        errorMsg.textContent = "Failed to load login configuration.";
+        console.error(err);
+      }
+    }
+
+    await initSupabase();
+
+    // Handle traditional email/password login
     document.getElementById("login-form").addEventListener("submit", async (e) => {
       e.preventDefault();
+      errorMsg.textContent = "";
+
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
 
-      try {
-        const res = await fetch(`${API_BASE}/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
-        const data = await res.json();
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-        if (!res.ok) {
-          document.querySelector('.container').insertAdjacentHTML(
-            'beforeend',
-            `<p style="color:red;">${data.error}</p>`
-          );
-          return;
-        }
-
-        window.location.href = '/mylabs/dashboard';
-      } catch (err) {
-        console.error(err);
+      if (error) {
+        errorMsg.textContent = error.message;
+      } else {
+        window.location.href = "/mylabs/dashboard";
       }
     });
 
-    // ----------------------
-    // GitHub OAuth
-    // ----------------------
-    async function handleGitHubToken(token) {
+    // Handle GitHub OAuth redirect token
+    async function handleGitHubRedirect() {
+      const hash = window.location.hash;
+      if (!hash.includes("access_token")) return;
+
+      const params = new URLSearchParams(hash.slice(1));
+      const accessToken = params.get("access_token");
+      const expiresIn = params.get("expires_in");
+
+      // Store the GitHub token securely in API cookie
       try {
-        // Send token to server to set HTTP-only cookie
-        const res = await fetch(`${API_BASE}/config-login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ provider_token: token }),
-          credentials: 'include'
+        await fetch("/config-login/github-token", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ access_token: accessToken })
         });
-        const data = await res.json();
-
-        if (!res.ok) {
-          document.querySelector('.container').insertAdjacentHTML(
-            'beforeend',
-            `<p style="color:red;">${data.error}</p>`
-          );
-          return;
-        }
-
-        // Update button to "Continue as GitHub Name" with avatar
-        githubLogo.src = data.user.avatar_url || '/mylabs/github-mark.png';
-        githubText.textContent = `Continue as ${data.user.full_name || data.user.email}`;
-
-        githubBtn.addEventListener('click', () => {
-          window.location.href = '/mylabs/dashboard';
-        });
-
       } catch (err) {
+        errorMsg.textContent = "Failed to store GitHub token.";
+        console.error(err);
+      }
+
+      // Fetch GitHub user info
+      try {
+        const userRes = await fetch("https://api.github.com/user", {
+          headers: { Authorization: `token ${accessToken}` }
+        });
+        const userData = await userRes.json();
+
+        githubLogo.src = userData.avatar_url;
+        githubText.textContent = `Continue as ${userData.login}`;
+
+        githubBtn.onclick = () => {
+          window.location.href = "/mylabs/dashboard";
+        };
+      } catch (err) {
+        errorMsg.textContent = "Failed to fetch GitHub user info.";
         console.error(err);
       }
     }
 
-    // ----------------------
-    // Extract token from URL fragment
-    // ----------------------
-    const fragment = new URLSearchParams(window.location.hash.slice(1));
-    const accessToken = fragment.get('access_token');
+    githubBtn.addEventListener("click", async () => {
+      // Initiate OAuth flow if user hasn't already signed in via redirect
+      if (!githubBtn.onclick) {
+        const { data, error } = await supabase.auth.signInWithOAuth({ provider: "github" });
+        if (error) {
+          errorMsg.textContent = "GitHub login failed.";
+          console.error(error);
+        }
+      }
+    });
 
-    if (accessToken) {
-      handleGitHubToken(accessToken);
-      // Clean up URL fragment
-      history.replaceState(null, '', window.location.pathname);
-    } else {
-      // Default click -> GitHub OAuth redirect
-      githubBtn.addEventListener('click', async () => {
-        window.location.href = `${API_BASE}/login/github`; // your OAuth redirect endpoint
-      });
-    }
+    handleGitHubRedirect();
   </script>
 </body>
 </html>
