@@ -1,220 +1,217 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>MyLabs Account - Login</title>
-<link rel="icon" href="MyLabsLogo.png" type="image/png"/>
-<style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #0a0a0a;
-    color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-
-  .container {
-    background-color: #111;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.3);
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-  }
-
-  h1 {
-    color: #1753aa;
-    margin-bottom: 1.5rem;
-  }
-
-  input[type="email"], input[type="password"] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 1rem;
-    border: none;
-    border-radius: 6px;
-    background-color: #222;
-    color: #fff;
-    font-size: 1rem;
-  }
-
-  button {
-    width: 100%;
-    padding: 10px;
-    background-color: #1753aa;
-    border: none;
-    border-radius: 6px;
-    color: #fff;
-    font-size: 1rem;
-    cursor: pointer;
-  }
-
-  .divider {
-    margin: 1.5rem 0;
-    color: #aaa;
-    font-size: 0.9rem;
-  }
-
-  .github-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    background-color: #333;
-    padding: 10px;
-    border-radius: 6px;
-    text-decoration: none;
-    color: #fff;
-    cursor: pointer;
-  }
-
-  .github-button img {
-    height: 24px;
-    width: 24px;
-    border-radius: 50%;
-  }
-
-  .error-msg {
-    color: #1753aa;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyLabs Account - Login</title>
+  <link rel="icon" href="MyLabsLogo.png" type="image/png"/>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #0a0a0a;
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background-color: #111;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+    h1 { color: #1753aa; margin-bottom: 1.5rem; }
+    input[type="email"], input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 1rem;
+      border: none;
+      border-radius: 6px;
+      background-color: #222;
+      color: white;
+      font-size: 1rem;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #1753aa;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .divider { margin: 1.5rem 0; color: #aaa; font-size: 0.9rem; }
+    .github-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background-color: #333;
+      padding: 10px;
+      border-radius: 6px;
+      text-decoration: none;
+      color: white;
+      cursor: pointer;
+    }
+    .github-button img { height: 24px; width: 24px; border-radius: 50%; }
+    .error-msg { color: #1753aa; margin-bottom: 1rem; font-size: 0.9rem; }
+  </style>
 </head>
 <body>
-<div class="container">
-  <h1>Login</h1>
-  <div id="error-container" class="error-msg"></div>
+  <div class="container">
+    <h1>Login</h1>
+    <div id="error-container" class="error-msg"></div>
 
-  <form id="login-form">
-    <input type="email" id="email" placeholder="Email" required />
-    <input type="password" id="password" placeholder="Password" required />
-    <button type="submit">Login</button>
-  </form>
+    <form id="login-form">
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <button type="submit">Login</button>
+    </form>
 
-  <div class="divider">or</div>
+    <div class="divider">or</div>
 
-  <div id="github-btn" class="github-button">
-    <img id="github-logo" src="/mylabs/github-mark.png" alt="GitHub Logo" />
-    <span id="github-text">Login with GitHub</span>
+    <div id="github-btn" class="github-button">
+      <img id="github-logo" src="/mylabs/github-mark.png" alt="GitHub Logo" />
+      <span id="github-text">Login with GitHub</span>
+    </div>
   </div>
-</div>
 
-<script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    const errorContainer = document.getElementById("error-container");
+    const githubBtn = document.getElementById("github-btn");
+    const githubLogo = document.getElementById("github-logo");
+    const githubText = document.getElementById("github-text");
 
-  const errorContainer = document.getElementById("error-container");
-  const githubBtn = document.getElementById("github-btn");
-  const githubLogo = document.getElementById("github-logo");
-  const githubText = document.getElementById("github-text");
+    let supabase;
 
-  let supabase;
-
-  // Load Supabase config from API
-  async function loadConfig() {
-    try {
-      const res = await fetch("https://api.rekietalabs.com/config-login");
-      if (!res.ok) throw new Error("Failed to load login config");
-      const data = await res.json();
-      supabase = createClient(data.supabaseUrl, data.supabaseAnonKey);
-    } catch (err) {
-      errorContainer.textContent = err.message;
-    }
-  }
-  await loadConfig();
-
-  // Check first-time login
-  async function checkUserFirstTime(userId) {
-    const { data: user, error } = await supabase
-      .from("mylabs_users")
-      .select("plan_type")
-      .eq("id", userId)
-      .single();
-
-    if (error || !user) {
-      throw new Error("Error checking account");
-    }
-
-    // No plan = first-time login
-    return !user.plan_type;
-  }
-
-  // Email/Password login
-  document.getElementById("login-form").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    errorContainer.textContent = "";
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      errorContainer.textContent = error.message;
-      return;
-    }
-
-    try {
-      const firstTime = await checkUserFirstTime(data.user.id);
-      if (firstTime) {
-        window.location.href = "/mylabs/pick-plan";
-      } else {
-        window.location.href = "/mylabs/dashboard";
+    // Load Supabase config
+    async function loadConfig() {
+      try {
+        const res = await fetch("https://api.rekietalabs.com/config-login");
+        if (!res.ok) throw new Error(`Failed to load login config: ${res.status}`);
+        const data = await res.json();
+        supabase = createClient(data.supabaseUrl, data.supabaseAnonKey);
+      } catch (err) {
+        console.error("Config load error:", err);
+        errorContainer.textContent = `Error loading login config: ${err.message}`;
       }
-    } catch (err) {
-      errorContainer.textContent = err.message;
     }
-  });
+    await loadConfig();
 
-  // GitHub login
-  githubBtn.addEventListener("click", async () => {
-    errorContainer.textContent = "";
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: "github",
-      options: {
-        redirectTo: "https://accounts.rekietalabs.com/mylabs/login"
+    // Email/password login
+    document.getElementById("login-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      errorContainer.textContent = "";
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          console.error("Email/password login error:", error);
+          errorContainer.textContent = `Login error: ${error.message}`;
+          return;
+        }
+        if (!data.user) {
+          errorContainer.textContent = "Login failed: no user returned";
+          return;
+        }
+        // Check if first-time login and redirect to pick-plan if needed
+        const { data: userInfo, error: userInfoError } = await supabase
+          .from('mylabs_users')
+          .select('id, full_name, plan_type, is_staff')
+          .eq('id', data.user.id)
+          .single();
+
+        if (userInfoError || !userInfo) {
+          errorContainer.textContent = `Error fetching user info: ${userInfoError?.message || 'No user found'}`;
+          return;
+        }
+
+        if (!userInfo.plan_type) {
+          window.location.href = '/mylabs/pick-plan';
+        } else {
+          window.location.href = '/mylabs/dashboard';
+        }
+      } catch (err) {
+        console.error("Unhandled login error:", err);
+        errorContainer.textContent = `Unhandled login error: ${err.message}`;
       }
     });
-    if (error) errorContainer.textContent = error.message;
-  });
 
-  // Handle OAuth redirect
-  async function handleOAuthRedirect() {
-    const hash = window.location.hash;
-    if (!hash.includes("access_token")) return;
-
-    const params = new URLSearchParams(hash.substring(1));
-    const access_token = params.get("access_token");
-
-    if (access_token) {
-      const { data: { user }, error } = await supabase.auth.getUser(access_token);
-      if (error) {
-        errorContainer.textContent = error.message;
-        return;
-      }
-
-      githubLogo.src = user.user_metadata?.avatar_url || "/mylabs/github-mark.png";
-      githubText.textContent = `Continue as ${user.user_metadata?.full_name || user.email}`;
-
-      githubBtn.addEventListener("click", async () => {
-        try {
-          const firstTime = await checkUserFirstTime(user.id);
-          if (firstTime) {
-            window.location.href = "/mylabs/pick-plan";
-          } else {
-            window.location.href = "/mylabs/dashboard";
-          }
-        } catch (err) {
-          errorContainer.textContent = err.message;
+    // GitHub login
+    githubBtn.addEventListener("click", async () => {
+      errorContainer.textContent = "";
+      try {
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider: "github",
+          options: { redirectTo: "https://accounts.rekietalabs.com/mylabs/login" }
+        });
+        if (error) {
+          console.error("GitHub OAuth error:", error);
+          errorContainer.textContent = `GitHub OAuth error: ${error.message}`;
         }
-      });
-    }
-  }
+      } catch (err) {
+        console.error("Unhandled GitHub OAuth error:", err);
+        errorContainer.textContent = `Unhandled GitHub OAuth error: ${err.message}`;
+      }
+    });
 
-  await handleOAuthRedirect();
-</script>
+    // Handle OAuth redirect
+    async function handleOAuthRedirect() {
+      const hash = window.location.hash;
+      if (!hash.includes("access_token")) return;
+
+      const params = new URLSearchParams(hash.substring(1));
+      const access_token = params.get("access_token");
+      if (!access_token) return;
+
+      try {
+        const { data, error } = await supabase.auth.getUser(access_token);
+        if (error) {
+          console.error("OAuth getUser error:", error);
+          errorContainer.textContent = `OAuth getUser error: ${error.message}`;
+          return;
+        }
+        if (!data.user) {
+          errorContainer.textContent = "No user returned from OAuth login.";
+          return;
+        }
+
+        githubLogo.src = data.user.user_metadata?.avatar_url || "/mylabs/github-mark.png";
+        githubText.textContent = `Continue as ${data.user.user_metadata?.full_name || data.user.email}`;
+
+        githubBtn.addEventListener("click", async () => {
+          const { data: userInfo, error: userInfoError } = await supabase
+            .from('mylabs_users')
+            .select('id, plan_type')
+            .eq('id', data.user.id)
+            .single();
+
+          if (userInfoError || !userInfo) {
+            errorContainer.textContent = `Error fetching user info: ${userInfoError?.message || 'No user found'}`;
+            return;
+          }
+
+          if (!userInfo.plan_type) {
+            window.location.href = '/mylabs/pick-plan';
+          } else {
+            window.location.href = '/mylabs/dashboard';
+          }
+        });
+      } catch (err) {
+        console.error("Unhandled OAuth redirect error:", err);
+        errorContainer.textContent = `Unhandled OAuth redirect error: ${err.message}`;
+      }
+    }
+
+    await handleOAuthRedirect();
+  </script>
 </body>
 </html>
