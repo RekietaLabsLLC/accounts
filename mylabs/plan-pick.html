@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyLabs Account - Pick Your Plan</title>
+<link rel="icon" href="MyLabsLogo.png" type="image/png"/>
+<style>
+  :root {
+    --brand-color: #1753aa;
+    --bg-color: #0f0f0f;
+    --text-color: #fff;
+  }
+
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    flex-direction: column;
+  }
+
+  /* Spinner */
+  #spinner-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    animation: fadeIn 1s ease-in-out;
+  }
+
+  .spinner {
+    border: 6px solid #ccc;
+    border-top: 6px solid var(--brand-color);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* Plans container */
+  #plans-container {
+    display: none;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+
+  .plan-card {
+    background: #1a1a1a;
+    border: 2px solid var(--brand-color);
+    border-radius: 10px;
+    padding: 20px;
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s;
+  }
+
+  .plan-card:hover {
+    transform: scale(1.05);
+  }
+
+  .plan-card h2 {
+    margin: 0 0 10px 0;
+    color: var(--brand-color);
+  }
+
+  .plan-card ul {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+    flex-grow: 1;
+  }
+
+  .plan-card ul li {
+    margin-bottom: 8px;
+  }
+
+  .plan-card button {
+    margin-top: auto;
+    padding: 10px 20px;
+    background: var(--brand-color);
+    border: none;
+    color: #fff;
+    font-size: 1em;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  /* Error container */
+  #error-container {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    text-align: center;
+  }
+
+  #error-message {
+    color: var(--brand-color);
+    font-size: 1.2em;
+  }
+
+  #return-login {
+    padding: 10px 20px;
+    background: var(--brand-color);
+    border: none;
+    color: #fff;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 6px;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+  }
+
+  @media (max-width: 600px) {
+    #plans-container {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div id="spinner-container">
+  <div class="spinner"></div>
+  <div id="spinner-text">Setting up your Account. Please wait.</div>
+</div>
+
+<div id="error-container">
+  <div id="error-message"></div>
+  <button id="return-login" onclick="location.href='/mylabs/login'">Return to Login</button>
+</div>
+
+<div id="plans-container">
+  <div class="plan-card">
+    <h2>Basic</h2>
+    <ul>
+      <li>A MyLabs Account</li>
+      <li>A Publisher Account</li>
+      <li>3 Model Boosts per month</li>
+    </ul>
+    <button onclick="pickPlan('basic')">Continue</button>
+  </div>
+
+  <div class="plan-card">
+    <h2>Premium</h2>
+    <ul>
+      <li>A MyLabs Account</li>
+      <li>A Premium Publisher Account</li>
+      <li>Unlimited Model Boosts</li>
+      <li>RekietaLabs API</li>
+      <li>Early Access to Features</li>
+      <li>Bigger Upload Sizes</li>
+    </ul>
+    <button onclick="pickPlan('premium')">Continue</button>
+  </div>
+</div>
+
+<script>
+  // Fetch logged-in user info from API
+  async function getUser() {
+    try {
+      const res = await fetch('https://api.rekietalabs.com/mylabs/user', { credentials: 'include' });
+      if (!res.ok) throw new Error('Not logged in');
+      const user = await res.json();
+      return user;
+    } catch {
+      return null;
+    }
+  }
+
+  function showError(message) {
+    document.getElementById('spinner-container').style.display = 'none';
+    document.getElementById('plans-container').style.display = 'none';
+    const errorContainer = document.getElementById('error-container');
+    errorContainer.style.display = 'flex';
+    document.getElementById('error-message').textContent = message;
+  }
+
+  async function pickPlan(plan) {
+    document.getElementById('plans-container').style.display = 'none';
+    document.getElementById('spinner-container').style.display = 'flex';
+    document.getElementById('spinner-text').textContent = 'Selecting your plan. Please wait.';
+    try {
+      const user = await getUser();
+      if (!user) throw new Error('No session found');
+
+      const res = await fetch('https://api.rekietalabs.com/mylabs/plan-pick', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ user_id: user.id, plan, email: user.email }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.checkout_url) throw new Error(data.error || 'Failed to create checkout');
+
+      window.location.href = data.checkout_url;
+    } catch (err) {
+      showError(err.message);
+    }
+  }
+
+  // Initial setup
+  window.addEventListener('DOMContentLoaded', async () => {
+    const user = await getUser();
+    setTimeout(() => {
+      if (!user) {
+        showError("We're sorry. Our system is having trouble accessing your account. Please try again later.");
+      } else {
+        document.getElementById('spinner-container').style.display = 'none';
+        document.getElementById('plans-container').style.display = 'flex';
+      }
+    }, 5000); // spinner for 5 seconds
+  });
+</script>
+
+</body>
+</html>
