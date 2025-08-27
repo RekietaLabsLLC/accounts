@@ -117,7 +117,6 @@
 
     let supabase;
 
-    // Load Supabase config from API
     async function loadConfig() {
       try {
         const res = await fetch("https://api.rekietalabs.com/config-login");
@@ -131,6 +130,28 @@
 
     await loadConfig();
 
+    async function redirectUser(user) {
+      // Check if the user has already picked a plan
+      const { data, error } = await supabase
+        .from('mylabs_users')
+        .select('plan_type')
+        .eq('id', user.id)
+        .single();
+
+      if (error) {
+        errorContainer.textContent = "Error checking account. Please try again.";
+        return;
+      }
+
+      if (!data.plan_type) {
+        // User hasn't picked a plan yet
+        window.location.href = "/mylabs/pick-plan";
+      } else {
+        // User has a plan, go to dashboard
+        window.location.href = "/mylabs/dashboard";
+      }
+    }
+
     // Email/Password login
     document.getElementById("login-form").addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -142,7 +163,7 @@
       if (error) {
         errorContainer.textContent = error.message;
       } else {
-        window.location.href = "/mylabs/dashboard";
+        await redirectUser(data.user);
       }
     });
 
@@ -167,7 +188,6 @@
       const access_token = params.get("access_token");
 
       if (access_token) {
-        // Get user info from Supabase with the access token
         const { data: { user }, error } = await supabase.auth.getUser(access_token);
         if (error) {
           errorContainer.textContent = error.message;
@@ -176,8 +196,8 @@
 
         githubLogo.src = user.user_metadata?.avatar_url || "/mylabs/github-mark.png";
         githubText.textContent = `Continue as ${user.user_metadata?.full_name || user.email}`;
-        githubBtn.addEventListener("click", () => {
-          window.location.href = "/mylabs/dashboard";
+        githubBtn.addEventListener("click", async () => {
+          await redirectUser(user);
         });
       }
     }
