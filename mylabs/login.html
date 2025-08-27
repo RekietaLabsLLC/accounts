@@ -88,10 +88,8 @@
     const githubBtn = document.getElementById("github-btn");
     const githubLogo = document.getElementById("github-logo");
     const githubText = document.getElementById("github-text");
-
     let supabase;
 
-    // Load Supabase public config (anon key only)
     async function loadConfig() {
       try {
         const res = await fetch("https://api.rekietalabs.com/config-login");
@@ -105,13 +103,39 @@
     }
     await loadConfig();
 
+    // Redirect based on user plan
+    async function redirectByPlan(userId) {
+      try {
+        // Check user_subscriptions table for plan
+        const { data: sub, error: subErr } = await supabase
+          .from('user_subscriptions')
+          .select('plan')
+          .eq('user_id', userId)
+          .single();
+
+        if (subErr) {
+          console.error("Error fetching subscription:", subErr);
+          errorContainer.textContent = `Error checking plan: ${subErr.message}`;
+          return;
+        }
+
+        if (!sub || !sub.plan || sub.plan === "not logged in yet") {
+          window.location.href = '/mylabs/pick-plan';
+        } else {
+          window.location.href = '/mylabs/dashboard';
+        }
+      } catch (err) {
+        console.error("Unhandled redirect error:", err);
+        errorContainer.textContent = `Unhandled redirect error: ${err.message}`;
+      }
+    }
+
     // Email/password login
     document.getElementById("login-form").addEventListener("submit", async (e) => {
       e.preventDefault();
       errorContainer.textContent = "";
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
-
       try {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) {
@@ -124,25 +148,12 @@
           return;
         }
 
-        // Fetch user's subscription/plan info
-        const { data: userInfo, error: userInfoError } = await supabase
-          .from('user_subscriptions')
-          .select('plan')
-          .eq('user_id', data.user.id)
-          .single();
+        // Get first name from auth.users metadata
+        const { data: authUser, error: authErr } = await supabase.auth.getUser();
+        const fullName = authUser.user.user_metadata?.full_name || authUser.user.email;
+        console.log("Hello", fullName.split(" ")[0]); // For pick-plan page greeting
 
-        if (userInfoError) {
-          console.error("Fetch user subscription error:", userInfoError);
-          errorContainer.textContent = `Error fetching subscription: ${userInfoError.message}`;
-          return;
-        }
-
-        // Redirect logic
-        if (!userInfo || !userInfo.plan || userInfo.plan === "not logged in yet") {
-          window.location.href = '/mylabs/pick-plan';
-        } else {
-          window.location.href = '/mylabs/dashboard';
-        }
+        redirectByPlan(data.user.id);
       } catch (err) {
         console.error("Unhandled login error:", err);
         errorContainer.textContent = `Unhandled login error: ${err.message}`;
@@ -178,44 +189,23 @@
 
       try {
         const { data, error } = await supabase.auth.getUser(access_token);
-        if (error) {
-          console.error("OAuth getUser error:", error);
-          errorContainer.textContent = `OAuth getUser error: ${error.message}`;
-          return;
-        }
-        if (!data.user) {
-          errorContainer.textContent = "No user returned from OAuth login.";
+        if (error || !data.user) {
+          errorContainer.textContent = `OAuth getUser error: ${error?.message || 'No user returned'}`;
           return;
         }
 
         githubLogo.src = data.user.user_metadata?.avatar_url || "/mylabs/github-mark.png";
-        githubText.textContent = `Continue as ${data.user.user_metadata?.full_name || data.user.email}`;
+        const firstName = (data.user.user_metadata?.full_name || data.user.email).split(" ")[0];
+        githubText.textContent = `Continue as ${firstName}`;
 
         githubBtn.addEventListener("click", async () => {
-          const { data: userInfo, error: userInfoError } = await supabase
-            .from('user_subscriptions')
-            .select('plan')
-            .eq('user_id', data.user.id)
-            .single();
-
-          if (userInfoError) {
-            console.error("Fetch user subscription error:", userInfoError);
-            errorContainer.textContent = `Error fetching subscription: ${userInfoError.message}`;
-            return;
-          }
-
-          if (!userInfo || !userInfo.plan || userInfo.plan === "not logged in yet") {
-            window.location.href = '/mylabs/pick-plan';
-          } else {
-            window.location.href = '/mylabs/dashboard';
-          }
+          redirectByPlan(data.user.id);
         });
       } catch (err) {
         console.error("Unhandled OAuth redirect error:", err);
         errorContainer.textContent = `Unhandled OAuth redirect error: ${err.message}`;
       }
     }
-
     await handleOAuthRedirect();
   </script>
 </body>
