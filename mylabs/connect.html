@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connect Provider — MyLabs</title>
+  <link rel="icon" href="MyLabsLogo.png" type="image/png"/>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #111;
+      color: #eee;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: #1a1a1a;
+      border: 2px solid #1753aa;
+      padding: 2rem;
+      border-radius: 12px;
+      text-align: center;
+      width: 300px;
+    }
+
+    img.logo {
+      width: 100px;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #1753aa;
+    }
+
+    button {
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 1rem;
+      width: 100%;
+      font-weight: bold;
+    }
+
+    button.link {
+      background-color: #28a745;
+      color: #fff;
+    }
+
+    button.unlink {
+      background-color: #dc3545;
+      color: #fff;
+    }
+
+    .login {
+      margin-top: 1rem;
+      color: #ccc;
+      font-size: 0.9rem;
+    }
+
+    a {
+      color: #1753aa;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img class="logo" id="provider-logo" src="" alt="Provider Logo">
+    <h1 id="provider-name">Loading...</h1>
+    <button id="link-btn" style="display:none;"></button>
+    <div class="login" id="login-prompt" style="display:none;">
+      Please <a href="https://accounts.rekietalabs.com/login">login to MyLabs</a> to connect your account.
+    </div>
+  </div>
+
+  <script>
+    async function init() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const providerId = urlParams.get('provider');
+
+      if (!providerId) {
+        document.getElementById('provider-name').textContent = 'No provider specified';
+        return;
+      }
+
+      try {
+        const res = await fetch(`https://api.rekietalabs.com/oauth?provider=${providerId}`, {
+          credentials: 'include'
+        });
+        const data = await res.json();
+
+        if (data.error === 'Provider not specified' || data.error === 'Provider not found') {
+          document.getElementById('provider-name').textContent = 'Provider not found';
+          return;
+        }
+
+        if (!data.name) {
+          // No session detected
+          document.getElementById('login-prompt').style.display = 'block';
+          document.getElementById('provider-logo').style.display = 'none';
+          document.getElementById('link-btn').style.display = 'none';
+          return;
+        }
+
+        // Fill provider info
+        document.getElementById('provider-name').textContent = data.name;
+        document.getElementById('provider-logo').src = data.logo_url;
+
+        const btn = document.getElementById('link-btn');
+        btn.style.display = 'block';
+        btn.textContent = data.is_linked ? 'Unlink' : 'Link';
+        btn.className = data.is_linked ? 'unlink' : 'link';
+        btn.onclick = () => {
+          window.location.href = data.external_settings_url;
+        };
+      } catch (err) {
+        console.error(err);
+        document.getElementById('provider-name').textContent = 'Error loading provider info';
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
