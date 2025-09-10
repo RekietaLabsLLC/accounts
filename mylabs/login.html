@@ -82,8 +82,8 @@
   </div>
 </div>
 
-<script type="module">
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1/dist/supabase.min.js"></script>
+<script>
 const errorContainer = document.getElementById("error-container");
 let supabase;
 
@@ -92,13 +92,18 @@ async function loadConfig() {
     const res = await fetch("https://api.rekietalabs.com/config-login");
     if (!res.ok) throw new Error(`Failed to load login config: ${res.status}`);
     const data = await res.json();
-    supabase = createClient(data.supabaseUrl, data.supabaseAnonKey);
+    supabase = Supabase.createClient(data.supabaseUrl, data.supabaseAnonKey);
   } catch (err) {
     console.error("Config load error:", err);
     errorContainer.textContent = `Error loading login config: ${err.message}`;
   }
 }
+
 await loadConfig();
+
+if (!supabase) {
+  errorContainer.textContent = "Supabase not initialized.";
+}
 
 // Redirect based on user plan
 async function redirectByPlan(userId) {
@@ -129,11 +134,9 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
   const password = document.getElementById("password").value;
 
   try {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { user, error } = await supabase.auth.signIn({ email, password });
     if (error) throw error;
-    if (!data.user) throw new Error("No user returned");
-
-    redirectByPlan(data.user.id);
+    redirectByPlan(user.id);
   } catch (err) {
     console.error("Login error:", err);
     errorContainer.textContent = `Login error: ${err.message}`;
@@ -144,7 +147,7 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
 document.getElementById("github-btn").addEventListener("click", async () => {
   errorContainer.textContent = "";
   try {
-    const { error } = await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signIn({
       provider: "github",
       options: { redirectTo: "https://accounts.rekietalabs.com/mylabs/login" }
     });
@@ -158,20 +161,19 @@ document.getElementById("github-btn").addEventListener("click", async () => {
 // Handle OAuth redirect
 async function handleOAuthRedirect() {
   try {
-    const { data, error } = await supabase.auth.getSessionFromUrl({ storeSession: true });
-    if (error) throw error;
-    if (!data.session) return;
+    const session = supabase.auth.session(); // v1: get current session from storage
+    if (!session || !session.user) return;
 
-    const user = data.session.user;
+    const user = session.user;
     const firstName = (user.user_metadata?.full_name || user.email).split(" ")[0];
 
-    // Update button text to welcome user
+    // Update button text
     const githubText = document.getElementById("github-text");
     const githubLogo = document.getElementById("github-logo");
     githubText.textContent = `Continue as ${firstName}`;
     githubLogo.src = user.user_metadata?.avatar_url || "/mylabs/github-mark.png";
 
-    // Redirect immediately based on plan
+    // Redirect based on plan
     redirectByPlan(user.id);
   } catch (err) {
     console.error("OAuth redirect error:", err);
@@ -179,7 +181,7 @@ async function handleOAuthRedirect() {
   }
 }
 
-await handleOAuthRedirect();
+window.addEventListener("load", handleOAuthRedirect);
 </script>
 </body>
 </html>
