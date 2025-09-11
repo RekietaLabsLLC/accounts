@@ -9,7 +9,6 @@ const supabase = createClient(
 
 export async function handler(event, context) {
   const time = new Date().toISOString();
-
   console.log(`[${time}] Incoming confirm.js request.`);
 
   const params = new URLSearchParams(event.rawUrl.split('?')[1] || '');
@@ -35,7 +34,6 @@ export async function handler(event, context) {
 
   try {
     console.log(`[${time}] Fetching user from Supabase... uid = ${uid}`);
-
     const { data, error } = await supabase.auth.admin.getUserById(uid);
 
     if (error) {
@@ -50,20 +48,13 @@ export async function handler(event, context) {
 
     const user = data.user;
 
-    console.log(`[${time}] User fetched from Supabase:`, user);
-
     if (!user.email) {
-      console.log(`[${time}] User object exists but has no email:`, user);
+      console.log(`[${time}] User has no email.`);
       return redirect('notfound');
     }
 
     const userEmail = user.email.toLowerCase();
     const providedEmail = email.toLowerCase();
-
-    console.log(`[${time}] Comparing emails:`, {
-      userEmail,
-      providedEmail
-    });
 
     if (userEmail !== providedEmail) {
       console.log(`[${time}] Emails do not match.`);
@@ -71,24 +62,21 @@ export async function handler(event, context) {
     }
 
     if (user.email_confirmed_at) {
-      console.log(`[${time}] User email already confirmed at:`, user.email_confirmed_at);
+      console.log(`[${time}] Already confirmed at: ${user.email_confirmed_at}`);
       return redirect('already');
     }
 
-    console.log(`[${time}] Proceeding to mark email as confirmed.`);
-
-    const { data: updatedUser, error: updateError } =
-      await supabase.auth.admin.updateUserById(uid, {
-        email_confirm: true
-      });
+    console.log(`[${time}] Marking email as confirmed...`);
+    const { error: updateError } = await supabase.auth.admin.updateUserById(uid, {
+      email_confirmed_at: new Date().toISOString()
+    });
 
     if (updateError) {
-      console.log(`[${time}] Error updating user to confirm email:`, updateError);
+      console.log(`[${time}] Error updating user:`, updateError);
       return redirect('supabasefail');
     }
 
-    console.log(`[${time}] Email successfully confirmed for user:`, updatedUser);
-
+    console.log(`[${time}] Email successfully confirmed for UID: ${uid}`);
     return {
       statusCode: 302,
       headers: {
@@ -97,7 +85,7 @@ export async function handler(event, context) {
     };
 
   } catch (err) {
-    console.error(`[${time}] Unexpected error in confirm.js:`, err);
+    console.error(`[${time}] Unexpected error:`, err);
     return redirect('default');
   }
 }
