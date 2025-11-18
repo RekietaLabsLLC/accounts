@@ -1,5 +1,5 @@
 (function () {
-  const faviconUrl = "https://accounts.rekietalabs.com/MyLabsLogo.png";
+  const faviconUrl = "https://accounts.rekietalabs.com/MyLabsLogo1.png";
 
   // Remove existing favicons
   document.querySelectorAll('link[rel~="icon"]').forEach(el => el.remove());
