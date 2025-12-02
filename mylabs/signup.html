@@ -1,501 +1,255 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>MyLabs Account — Signup</title>
-  <link rel="icon" href="MyLabsLogo1.png" type="image/png" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyLabs Signup</title>
+  <link rel="icon" href="MyLabsLogo.png" type="image/png">
+  <script src="https://cdn.jsdelivr.net/npm/jsencrypt/bin/jsencrypt.min.js"></script>
   <style>
-    :root{
-      --bg: #0b0b0c;
-      --card: #0f1113;
-      --muted: #9aa6b2;
-      --accent: #1753aa; /* your brand blue */
-      --accent-strong: #0e3d85;
-      --glass: rgba(255,255,255,0.03);
-      --radius: 14px;
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      background-color: #0c0c0c;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow-x: hidden;
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0}
-    body{
-      font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-      background: linear-gradient(180deg,#050507 0%, #0d1020 50%);
-      color:#e6eef8;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:24px;
+    .container {
+      width: 100%;
+      max-width: 500px;
+      padding: 30px;
+      text-align: center;
     }
 
-    /* subtle animated nebula background */
-    .bg-blob{
-      position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
-      background:
-        radial-gradient(650px 450px at 10% 20%, rgba(23,83,170,0.08), transparent 10%),
-        radial-gradient(500px 380px at 80% 80%, rgba(23,83,170,0.06), transparent 12%);
-      filter:blur(24px) saturate(120%);
-      mix-blend-mode:screen;
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #1753aa;
     }
 
-    .card{
-      position:relative;
-      z-index:1;
-      width:100%;
-      max-width:680px;
-      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border:1px solid rgba(23,83,170,0.12);
-      border-radius:var(--radius);
-      padding:32px;
-      box-shadow: 0 10px 30px rgba(2,6,23,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
-      display:flex;
-      gap:28px;
-      align-items:center;
-      justify-content:space-between;
-    }
-
-    /* left column — content */
-    .left{
-      flex:1 1 420px;
-      min-width:260px;
-    }
-
-    /* right column — decorative / logo */
-    .right{
-      width:220px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-
-    .logo-wrap{
-      width:160px; height:160px; border-radius:12px;
-      background: linear-gradient(135deg, rgba(23,83,170,0.12), rgba(23,83,170,0.06));
-      display:flex; align-items:center; justify-content:center;
-      border:1px solid rgba(23,83,170,0.08);
-      box-shadow: 0 6px 22px rgba(23,83,170,0.06);
-    }
-
-    .logo-wrap img{ width:84px; height:auto; filter: drop-shadow(0 6px 20px rgba(23,83,170,0.08)); }
-
-    h1{
-      margin:0 0 6px 0;
-      font-size:20px;
-      font-weight:700;
-      color: #f3f8ff;
-      letter-spacing: -0.2px;
-    }
-
-    p.lead{
-      margin:0 0 18px 0;
-      color:var(--muted);
-      font-size:14px;
-    }
-
-    /* slide area */
-    .slides {
-      width:100%;
-      min-height:220px;
-      position:relative;
-      overflow:hidden;
-    }
-
-    .slide {
-      position:absolute;
-      inset:0;
-      padding:6px 0 0 0;
-      opacity:0;
-      transform:translateX(24px) scale(0.996);
-      transition: all 420ms cubic-bezier(.22,.9,.23,1);
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-    }
-
-    .slide.visible{
-      opacity:1;
-      transform:translateX(0) scale(1);
-      z-index:2;
-    }
-
-    .slide h2{
-      margin:0;
-      font-size:18px;
-      color:#eaf4ff;
-    }
-
-    .controls{
-      margin-top:12px;
-      display:flex;
-      gap:12px;
-      align-items:center;
-      justify-content:flex-start;
-    }
-
-    input[type="text"], input[type="email"], input[type="password"]{
-      width:100%;
-      padding:12px 14px;
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,0.04);
-      background:var(--glass);
-      color:#fff;
-      outline:none;
-      font-size:15px;
-      transition: box-shadow 180ms, border-color 180ms;
-    }
-
-    input:focus{
-      border-color: var(--accent);
-      box-shadow: 0 6px 26px rgba(23,83,170,0.12), 0 0 0 6px rgba(23,83,170,0.03);
+    input {
+      width: 100%;
+      padding: 14px;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: none;
+      background-color: #1b1b1b;
+      color: #fff;
+      font-size: 1rem;
     }
 
     .button {
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      background: linear-gradient(180deg,var(--accent), var(--accent-strong));
-      color:white;
-      border:none;
-      padding:12px 18px;
-      border-radius:10px;
-      font-weight:600;
-      cursor:pointer;
-      box-shadow: 0 8px 24px rgba(23,83,170,0.18);
-      transition: transform 160ms ease, box-shadow 160ms ease, opacity 120ms;
+      margin-top: 20px;
+      padding: 14px;
+      width: 100%;
+      background-color: #1753aa;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: 0.3s;
     }
 
-    .button:active{ transform: translateY(1px) }
-    .button.secondary{
-      background:transparent;
-      border:1px solid rgba(255,255,255,0.04);
-      color:var(--muted);
-      box-shadow:none;
+    .button:hover {
+      background-color: #0d3d7a;
     }
 
-    .small{
-      font-size:13px; color:var(--muted);
+    .error {
+      color: #d32f2f;
+      font-size: 0.9rem;
+      margin-top: 5px;
     }
 
-    .error{ color:#ffb4b4; font-size:13px; margin-top:6px; }
-    .success{ color:#bff0c1; font-size:13px; margin-top:6px; }
-
-    /* progress dots */
-    .dots{
-      margin-top:12px; display:flex; gap:8px; align-items:center;
-    }
-    .dot{
-      width:8px; height:8px; border-radius:999px;
-      background: rgba(255,255,255,0.06);
-      transition: all 160ms;
-      box-shadow: none;
-    }
-    .dot.active{ background:var(--accent); box-shadow:0 6px 18px rgba(23,83,170,0.12) }
-
-    /* footer small note */
-    .note{
-      margin-top:14px; color:var(--muted); font-size:13px;
+    .slide {
+      display: none;
+      opacity: 0;
+      transform: translateX(50px);
+      transition: all 0.5s ease;
     }
 
-    /* responsive */
-    @media (max-width:880px){
-      .card{ padding:20px; gap:18px; flex-direction:column; align-items:stretch; }
-      .right{ width:100%; display:flex; justify-content:center; }
-      .logo-wrap{ width:120px; height:120px; }
+    .slide.visible {
+      display: block;
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .success-message {
+      font-size: 1rem;
+      color: #aaa;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <div class="bg-blob" aria-hidden="true"></div>
+  <div class="container">
 
-  <main class="card" role="main">
-    <section class="left" aria-labelledby="signupTitle">
-      <h1 id="signupTitle">Create your MyLabs account</h1>
-      <p class="lead">Fast signup — we'll send a confirmation link to your email. Complete the form to continue.</p>
+    <!-- Welcome Screen -->
+    <div id="welcome" class="slide visible">
+      <h1>Thanks for choosing MyLabs</h1>
+      <p>Let's get your account set up quickly.</p>
+      <button class="button" id="startBtn">Start</button>
+    </div>
 
-      <!-- slides container -->
-      <div class="slides" id="slides">
+    <!-- First Name -->
+    <div id="firstNameSlide" class="slide">
+      <h1>First Name</h1>
+      <input type="text" id="firstName" placeholder="Enter your first name">
+      <div class="error" id="errorFirst"></div>
+      <button class="button" id="nextFirst">Next</button>
+    </div>
 
-        <!-- Intro 1 -->
-        <div id="slide-intro1" class="slide visible" aria-hidden="false">
-          <h2>Welcome to MyLabs</h2>
-          <p class="small">A better RekietaLabs experience for account management and tools.</p>
-          <div class="controls">
-            <button class="button" id="startBtn">Get started</button>
-            <div class="dots" aria-hidden="true" style="margin-left:12px">
-              <span class="dot active"></span>
-              <span class="dot"></span>
-              <span class="dot"></span>
-            </div>
-          </div>
-        </div>
+    <!-- Last Name -->
+    <div id="lastNameSlide" class="slide">
+      <h1>Last Name</h1>
+      <input type="text" id="lastName" placeholder="Enter your last name">
+      <div class="error" id="errorLast"></div>
+      <button class="button" id="nextLast">Next</button>
+    </div>
 
-        <!-- Intro 2 -->
-        <div id="slide-intro2" class="slide" aria-hidden="true">
-          <h2>Quick and secure</h2>
-          <p class="small">We keep things secure and simple — no third-party providers here.</p>
-          <div class="controls">
-            <button class="button" id="continueBtn">Continue</button>
-            <button class="button secondary" id="skipBtn">Skip</button>
-            <div class="dots" aria-hidden="true" style="margin-left:12px">
-              <span class="dot"></span>
-              <span class="dot active"></span>
-              <span class="dot"></span>
-            </div>
-          </div>
-        </div>
+    <!-- Email -->
+    <div id="emailSlide" class="slide">
+      <h1>Email Address</h1>
+      <input type="email" id="email" placeholder="Enter your email">
+      <div class="error" id="errorEmail"></div>
+      <button class="button" id="nextEmail">Next</button>
+    </div>
 
-        <!-- Question 1: First name -->
-        <div id="slide-q1" class="slide" aria-hidden="true">
-          <h2>What's your first name?</h2>
-          <input id="firstName" type="text" inputmode="text" autocomplete="given-name" placeholder="First name" />
-          <div class="error" id="errFirst"></div>
-          <div class="controls">
-            <button class="button" id="toQ2">Next</button>
-            <div class="dots" aria-hidden="true">
-              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-            </div>
-          </div>
-        </div>
+    <!-- Password -->
+    <div id="passwordSlide" class="slide">
+      <h1>Create a Password</h1>
+      <input type="password" id="password" placeholder="Enter a password">
+      <div class="error" id="errorPwd"></div>
+      <button class="button" id="finishBtn">Finish</button>
+    </div>
 
-        <!-- Question 2: Last name -->
-        <div id="slide-q2" class="slide" aria-hidden="true">
-          <h2>What's your last name?</h2>
-          <input id="lastName" type="text" inputmode="text" autocomplete="family-name" placeholder="Last name" />
-          <div class="error" id="errLast"></div>
-          <div class="controls">
-            <button class="button" id="toQ3">Next</button>
-            <button class="button secondary" id="backQ1">Back</button>
-          </div>
-        </div>
+    <!-- Success -->
+    <div id="successSlide" class="slide">
+      <h1>Almost done!</h1>
+      <p class="success-message" id="successText"></p>
+    </div>
 
-        <!-- Question 3: Email -->
-        <div id="slide-q3" class="slide" aria-hidden="true">
-          <h2>Your email address</h2>
-          <input id="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" />
-          <div class="error" id="errEmail"></div>
-          <div class="controls">
-            <button class="button" id="toQ4">Next</button>
-            <button class="button secondary" id="backQ2">Back</button>
-          </div>
-        </div>
-
-        <!-- Question 4: Password -->
-        <div id="slide-q4" class="slide" aria-hidden="true">
-          <h2>Create a password</h2>
-          <input id="password" type="password" autocomplete="new-password" placeholder="Choose a secure password" />
-          <div class="error" id="errPwd"></div>
-          <div class="controls">
-            <button class="button" id="toConfirm">Finish</button>
-            <button class="button secondary" id="backQ3">Back</button>
-          </div>
-        </div>
-
-        <!-- Confirm page -->
-        <div id="slide-confirm" class="slide" aria-hidden="true">
-          <h2>Confirm your details</h2>
-
-          <label class="small" for="confFirst">First name</label>
-          <input id="confFirst" type="text" />
-
-          <label class="small" for="confLast">Last name</label>
-          <input id="confLast" type="text" />
-
-          <label class="small" for="confEmail">Email address</label>
-          <input id="confEmail" type="email" />
-
-          <label class="small" for="confPassword">Password (leave blank to use the one you entered)</label>
-          <input id="confPassword" type="password" placeholder="Optional" />
-
-          <div class="error" id="errConfirm"></div>
-          <div class="controls">
-            <button class="button" id="confirmCreate">Confirm & Create Account</button>
-            <button class="button secondary" id="backQ4">Back</button>
-          </div>
-        </div>
-
-        <!-- Success page -->
-        <div id="slide-success" class="slide" aria-hidden="true">
-          <h2>Thanks — account created</h2>
-          <p id="successText" class="small">We have sent a confirmation link to your email — please check your inbox.</p>
-          <p class="note">You will be redirected to the login page in 10 seconds.</p>
-        </div>
-
-      </div> <!-- /slides -->
-
-    </section>
-
-    <aside class="right" aria-hidden="true">
-      <div class="logo-wrap" title="MyLabs">
-        <img src="MyLabsLogo1.png" alt="MyLabs logo" />
-      </div>
-    </aside>
-  </main>
+  </div>
 
   <script>
-    // slide management
-    const order = [
-      "slide-intro1",
-      "slide-intro2",
-      "slide-q1",
-      "slide-q2",
-      "slide-q3",
-      "slide-q4",
-      "slide-confirm",
-      "slide-success"
+    const slides = [
+      "welcome",
+      "firstNameSlide",
+      "lastNameSlide",
+      "emailSlide",
+      "passwordSlide",
+      "successSlide"
     ];
-    let idx = 0;
-    const show = id => {
-      order.forEach(s => {
-        const el = document.getElementById(s);
-        if(!el) return;
-        el.classList.remove("visible");
-        el.setAttribute("aria-hidden","true");
-        el.style.display = "none";
+
+    let currentSlideIndex = 0;
+
+    function showSlide(index) {
+      slides.forEach((id, i) => {
+        const el = document.getElementById(id);
+        if(i === index) {
+          el.classList.add("visible");
+        } else {
+          el.classList.remove("visible");
+        }
       });
-      const active = document.getElementById(id);
-      if(active){
-        active.style.display = "block";
-        void active.offsetWidth;
-        active.classList.add("visible");
-        active.setAttribute("aria-hidden","false");
-      }
-    };
-    // initial
-    show(order[idx]);
+      currentSlideIndex = index;
+    }
 
-    // auto intro progress
     document.getElementById("startBtn").addEventListener("click", () => {
-      idx = 1; show(order[idx]);
-    });
-    document.getElementById("continueBtn").addEventListener("click", () => {
-      idx = 2; show(order[idx]);
-    });
-    document.getElementById("skipBtn").addEventListener("click", () => {
-      idx = 2; show(order[idx]);
+      showSlide(1);
     });
 
-    // navigation buttons
-    document.getElementById("toQ2").addEventListener("click", () => {
-      const v = document.getElementById("firstName").value.trim();
-      if(!v){ document.getElementById("errFirst").innerText = "Please enter your first name."; return; }
-      document.getElementById("errFirst").innerText = "";
-      idx = 2; show(order[idx]);
+    document.getElementById("nextFirst").addEventListener("click", () => {
+      const val = document.getElementById("firstName").value.trim();
+      if(!val) {
+        document.getElementById("errorFirst").innerText = "First name required.";
+        return;
+      }
+      document.getElementById("errorFirst").innerText = "";
+      showSlide(2);
     });
 
-    document.getElementById("toQ3").addEventListener("click", () => {
-      const v = document.getElementById("lastName").value.trim();
-      if(!v){ document.getElementById("errLast").innerText = "Please enter your last name."; return; }
-      document.getElementById("errLast").innerText = "";
-      idx = 3; show(order[idx]);
+    document.getElementById("nextLast").addEventListener("click", () => {
+      const val = document.getElementById("lastName").value.trim();
+      if(!val) {
+        document.getElementById("errorLast").innerText = "Last name required.";
+        return;
+      }
+      document.getElementById("errorLast").innerText = "";
+      showSlide(3);
     });
 
-    document.getElementById("toQ4").addEventListener("click", () => {
-      const v = document.getElementById("email").value.trim();
-      const err = document.getElementById("errEmail");
-      if(!v){ err.innerText = "Please enter your email."; return; }
-      if(!/^\S+@\S+\.\S+$/.test(v)){ err.innerText = "Please enter a valid email address."; return; }
-      err.innerText = "";
-      idx = 4; show(order[idx]);
+    document.getElementById("nextEmail").addEventListener("click", () => {
+      const val = document.getElementById("email").value.trim();
+      if(!val) {
+        document.getElementById("errorEmail").innerText = "Email required.";
+        return;
+      }
+      document.getElementById("errorEmail").innerText = "";
+      showSlide(4);
     });
 
-    document.getElementById("toConfirm").addEventListener("click", () => {
-      const v = document.getElementById("password").value;
-      if(!v || v.length < 6){ document.getElementById("errPwd").innerText = "Please enter a password (6+ characters)."; return; }
-      document.getElementById("errPwd").innerText = "";
+    document.getElementById("finishBtn").addEventListener("click", async () => {
+      const firstName = document.getElementById("firstName").value.trim();
+      const lastName = document.getElementById("lastName").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
 
-      // prefill confirm fields
-      document.getElementById("confFirst").value = document.getElementById("firstName").value.trim();
-      document.getElementById("confLast").value = document.getElementById("lastName").value.trim();
-      document.getElementById("confEmail").value = document.getElementById("email").value.trim();
-      document.getElementById("confPassword").value = "";
-      idx = 6; show(order[idx]);
-    });
+      if(!password) {
+        document.getElementById("errorPwd").innerText = "Password required.";
+        return;
+      }
+      document.getElementById("errorPwd").innerText = "";
 
-    // back buttons
-    document.getElementById("backQ1")?.addEventListener("click", () => { idx = 1; show(order[idx]);});
-    document.getElementById("backQ2")?.addEventListener("click", () => { idx = 2; show(order[idx]);});
-    document.getElementById("backQ3")?.addEventListener("click", () => { idx = 3; show(order[idx]);});
-    document.getElementById("backQ4")?.addEventListener("click", () => { idx = 4; show(order[idx]);});
+      // Encrypt password with public key
+      const publicKey = `-----BEGIN PUBLIC KEY-----
+YOUR_PUBLIC_KEY_HERE
+-----END PUBLIC KEY-----`;
 
-    // final confirm & create account
-    document.getElementById("confirmCreate").addEventListener("click", async () => {
-      const confFirst = document.getElementById("confFirst").value.trim();
-      const confLast  = document.getElementById("confLast").value.trim();
-      const confEmail = document.getElementById("confEmail").value.trim();
-      let confPwd     = document.getElementById("confPassword").value;
+      const encrypt = new JSEncrypt();
+      encrypt.setPublicKey(publicKey);
+      const encryptedPassword = encrypt.encrypt(password);
 
-      // basic validation
-      const err = document.getElementById("errConfirm");
-      err.innerText = "";
-      if(!confFirst || !confLast || !confEmail){ err.innerText = "Please complete all fields."; return; }
-      if(!/^\S+@\S+\.\S+$/.test(confEmail)){ err.innerText = "Please use a valid email address."; return; }
-      if(!confPwd) confPwd = document.getElementById("password").value;
-
-      // Show loading state
-      const btn = document.getElementById("confirmCreate");
-      const origText = btn.innerHTML;
-      btn.disabled = true;
-      btn.innerHTML = 'Creating your account…';
+      if(!encryptedPassword) {
+        alert("Encryption failed.");
+        return;
+      }
 
       try {
-        const payload = {
-          first_name: confFirst,
-          last_name: confLast,
-          email: confEmail,
-          password: confPwd
-        };
-
         const res = await fetch("https://api.rekietalabs.com/signup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
+          body: JSON.stringify({
+            first_name: firstName,
+            last_name: lastName,
+            email: email,
+            password: encryptedPassword
+          })
         });
 
-        if(!res.ok){
-          const data = await res.json().catch(()=>({ error: "Signup failed" }));
+        if(!res.ok) {
+          const data = await res.json();
           throw new Error(data.error || "Signup failed");
         }
 
-        // success UI
-        document.getElementById("successText").innerText = `A confirmation link has been sent to ${confEmail}. Please check your inbox and follow the instructions to activate your account.`;
-        idx = 7; show(order[idx]);
+        document.getElementById("successText").innerText = `A 6-digit code has been sent to ${email}. Please check your inbox to complete your registration.`;
+        showSlide(5);
 
-        // redirect after 10s
-        setTimeout(()=> {
-          window.location.href = "https://accounts.rekietalabs.com/mylabs/login";
+        setTimeout(() => {
+          window.location.href = `https://accounts.rekietalabs.com/mylabs/verify?useremail=${encodeURIComponent(email)}`;
         }, 10000);
 
-      } catch (e) {
-        err.innerText = e.message || "Signup failed";
-        btn.disabled = false;
-        btn.innerHTML = origText;
+      } catch(err) {
+        alert("Signup failed: " + err.message);
       }
     });
-
-    // small accessibility: allow Enter to progress on inputs
-    ["firstName","lastName","email","password","confPassword"].forEach(id=>{
-      const el=document.getElementById(id);
-      if(!el) return;
-      el.addEventListener("keyup",(ev)=>{
-        if(ev.key === "Enter"){
-          // map to appropriate button
-          if(id==="firstName") document.getElementById("toQ2").click();
-          if(id==="lastName") document.getElementById("toQ3").click();
-          if(id==="email") document.getElementById("toQ4").click();
-          if(id==="password") document.getElementById("toConfirm").click();
-          if(id==="confPassword") document.getElementById("confirmCreate").click();
-        }
-      });
-    });
-
-    // small auto-advance for intro slides
-    setTimeout(()=>{ if(idx===0){ idx=1; show(order[idx]); } }, 4800);
-    setTimeout(()=>{ if(idx===1){ /* leave for user to click */ } }, 11000);
-
   </script>
 </body>
 </html>
